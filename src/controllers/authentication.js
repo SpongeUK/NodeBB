@@ -77,6 +77,15 @@ authenticationController.register = function(req, res, next) {
 	});
 };
 
+authenticationController.registerMany = function (req, res, next) {
+    var newUsers = req.body;
+    if (!newUsers || !newUsers.length)
+        return next();
+
+    console.log("USERS: ", newUsers);
+    next();
+};
+
 function registerAndLoginUser(req, res, userData, callback) {
 	var uid;
 	async.waterfall([
