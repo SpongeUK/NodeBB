@@ -143,6 +143,16 @@ module.exports = function(User) {
 		});
 	};
 
+	User.createIfNotExists = function (userData, callback) {
+		var email = userData.email;
+
+		User.getUidByEmail(email.toLowerCase(), function(err, exists) {
+			if (exists) return callback();
+
+			User.create(userData, callback);
+		});
+	};
+
 	User.isDataValid = function(userData, callback) {
 		async.parallel({
 			emailValid: function(next) {

@@ -15,6 +15,8 @@ var async = require('async'),
 
 	authenticationController = {};
 
+var _ = require('lodash');
+
 authenticationController.register = function(req, res, next) {
 	var registrationType = meta.config.registrationType || 'normal';
 
@@ -77,13 +79,41 @@ authenticationController.register = function(req, res, next) {
 	});
 };
 
-authenticationController.registerMany = function (req, res, next) {
+function registerUser (userData, done) {
+	async.waterfall([
+		function (next) {
+			if (!userData.email) {
+				return next(new Error('[[error:invalid-email]]'));
+			}
+
+			if (!userData.username || !userData.username.length) {
+				return next(new Error('[[error:username-too-short]]'));
+			}
+
+			if (!userData.password || !userData.password.length) {
+				return next(new Error('[[user:change_password_error_length]]'));
+			}
+
+			next();
+		},
+		function (next) {
+			user.createIfNotExists(userData, done);
+		}
+	]);
+}
+
+authenticationController.registerMany = function (req, res, done) {
     var newUsers = req.body;
     if (!newUsers || !newUsers.length)
-        return next();
+        return done();
+	
+    async.each(newUsers, function (user, callback) {
+    	registerUser(user, callback);
+    }, function (err) {
+		if (err) done(err);
 
-    console.log("USERS: ", newUsers);
-    next();
+		done();
+    });
 };
 
 function registerAndLoginUser(req, res, userData, callback) {
