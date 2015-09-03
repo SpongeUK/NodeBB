@@ -105,14 +105,14 @@ function registerUser (userData, done) {
 authenticationController.registerMany = function (req, res, done) {
     var newUsers = req.body;
     if (!newUsers || !newUsers.length)
-        return done();
+        return res.status(400).send("No registrations provided");
 	
     async.each(newUsers, function (user, callback) {
     	registerUser(user, callback);
     }, function (err) {
-		if (err) done(err);
+		if (err) res.status(500).send(err);
 
-		done();
+		res.status(201).send();
     });
 };
 

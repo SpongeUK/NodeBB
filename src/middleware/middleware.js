@@ -30,6 +30,18 @@ var app,
 		helpers: require('../controllers/helpers')
 	};
 
+var settings = require('../../settings.js');
+
+middleware.validateRequestSource = function (req, res, next) {
+	if (!settings.restrictRequestSource)
+		return next();
+
+	if (settings.requestSource !== req.get('Referrer'))
+		return res.status(403).send();
+	
+	next();
+};
+
 middleware.authenticate = function(req, res, next) {
 	if (req.user) {
 		return next();

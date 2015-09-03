@@ -62,8 +62,8 @@
 				}));
 			});
 
-			router.post('/register', Auth.middleware.applyCSRF, controllers.authentication.register);
-			router.post('/registerMany', controllers.authentication.registerMany);
+			router.post('/register', [ Auth.middleware.applyCSRF, Auth.middleware.validateRequestSource ], controllers.authentication.register);
+			router.post('/registerMany', Auth.middleware.validateRequestSource, controllers.authentication.registerMany);
 			router.post('/login', Auth.middleware.applyCSRF, controllers.authentication.login);
 			router.post('/logout', Auth.middleware.applyCSRF, controllers.authentication.logout);
 
