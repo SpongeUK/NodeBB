@@ -9,6 +9,14 @@ var async = require('async'),
 	helpers = require('./helpers'),
 	groupsController = {};
 
+groupsController.create = function(req, res, next) {
+	groups.create({ name: req.params.name, description: req.body.description }, function(err, result) {
+		if (err) return next(err);
+
+		res.status(201).send();
+	});
+};
+
 groupsController.list = function(req, res, next) {
 	var sort = req.query.sort || 'alpha';
 
