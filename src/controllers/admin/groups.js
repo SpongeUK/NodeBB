@@ -4,6 +4,7 @@ var async = require('async'),
 
 	db = require('../../database'),
 	groups = require('../../groups'),
+	user = require('../../user'),
 	meta = require('../../meta'),
 	pagination = require('../../pagination'),
 	helpers = require('../helpers');
@@ -22,7 +23,12 @@ groupsController.create = function(req, res, next) {
 groupsController.addUser = function(req, res, next) {
     console.log("ADDING USERS TO GROUP ", req.params.name);
     console.log("USERS ", req.body);
-    res.status(200).send();
+    user.search({ query: req.body.username }, function (err, user) {
+        if (err) console.log("ERROR: ", err);
+
+        console.log("USER: ", user);
+        res.status(200).send();
+    });
 };
 
 groupsController.list = function(req, res, next) {
