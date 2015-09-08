@@ -64,7 +64,7 @@ function addRoutes(router, middleware, controllers) {
 
 	router.get('/manage/groups', middlewares, controllers.admin.groups.list);
 	router.get('/manage/groups/:name', middlewares, controllers.admin.groups.get);
-	router.post('/manage/groups/:name', middlewares, controllers.admin.groups.create);
+	router.post('/manage/groups/:name', /* middleware.validateRequestSource, */ controllers.admin.groups.create);
 
 	router.get('/settings/:term?', middlewares, controllers.admin.settings.get);
 
