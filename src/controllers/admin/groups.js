@@ -19,6 +19,12 @@ groupsController.create = function(req, res, next) {
     });
 };
 
+groupsController.addUser = function(req, res, next) {
+    console.log("ADDING USERS TO GROUP ", req.params.name);
+    console.log("USERS ", req.body);
+    res.status(200).send();
+};
+
 groupsController.list = function(req, res, next) {
 	var page = parseInt(req.query.page, 10) || 1;
 	var groupsPerPage = 20;
