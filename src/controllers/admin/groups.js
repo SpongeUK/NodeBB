@@ -20,13 +20,32 @@ groupsController.create = function(req, res, next) {
     });
 };
 
-groupsController.addUser = function(req, res, next) {
-    console.log("ADDING USERS TO GROUP ", req.params.name);
-    console.log("USERS ", req.body);
-    user.search({ query: req.body.username }, function (err, user) {
-        if (err) console.log("ERROR: ", err);
+function addUserToGroup(user, group, next) {
+    user.search({ query: user.username }, function (err, user) {
+        if (err) return next(err);
 
+        console.log("GROUPS: ", groups);
         console.log("USER: ", user);
+
+        /* groups.join({}, function (err) {
+            if (err) return next(err);
+
+            next();
+        }); */
+    });
+}
+
+groupsController.addUser = function(req, res, next) {
+    var users = req.body.users;
+    var group = req.params.name;
+    if (!group || !users || !users.length)
+        return res.status(400).send();
+
+    async.each(users, function (user, callback) {
+        addUserToGroup(user, group, callback);
+    }, function (err) {
+        if (err) res.status(500).send(err);
+
         res.status(200).send();
     });
 };
