@@ -12,9 +12,11 @@ var async = require('async'),
 var groupsController = {};
 
 groupsController.create = function(req, res, next) {
-	console.log("CREATING GROUP FOR COHORT ", req.params.name);
-	console.log("DESCRIPTION ", req.body);
-	res.status(201).send();
+    groups.create({ name: req.params.name, description: req.body.description }, function(err) {
+        if (err) return next(err);
+
+        res.status(201).send();
+    });
 };
 
 groupsController.list = function(req, res, next) {

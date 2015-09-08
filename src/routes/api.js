@@ -11,7 +11,7 @@ module.exports =  function(app, middleware, controllers) {
 	var router = express.Router();
 	app.use('/api', router);
 
-    router.post('/group/create/:name', controllers.admin.groups.create);
+    router.post('/group/create/:name', middleware.validateRequestSource, controllers.admin.groups.create);
 
 	router.get('/config', middleware.applyCSRF, controllers.api.getConfig);
 	router.get('/widgets/render', controllers.api.renderWidgets);
