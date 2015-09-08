@@ -34,8 +34,6 @@ function apiRouter(middleware, controllers) {
 
 	apiRoutes(router, middleware, controllers);
 
-    router.post('/manage/createGroup/:name', controllers.admin.groups.create);
-
 	return router;
 }
 
