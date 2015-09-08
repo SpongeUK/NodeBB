@@ -34,13 +34,13 @@ function apiRouter(middleware, controllers) {
 
 	apiRoutes(router, middleware, controllers);
 
+    router.post('/manage/createGroup/:name', controllers.admin.groups.create);
+
 	return router;
 }
 
 function addRoutes(router, middleware, controllers) {
 	var middlewares = [middleware.pluginHooks];
-
-    router.post('/manage/groups/:name', /* middleware.validateRequestSource, */ controllers.admin.groups.create);
 
 	router.get('/', middlewares, controllers.admin.home);
 	router.get('/general/dashboard', middlewares, controllers.admin.home);
