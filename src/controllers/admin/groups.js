@@ -21,7 +21,7 @@ groupsController.create = function(req, res, next) {
 };
 
 function addUserToGroup(user, group, next) {
-    user.getUidByUsername(username, function (err, user) {
+    user.getUidByUsername(user.username, function (err, user) {
         if (err) return next(err);
 
         console.log("GROUPS: ", groups);
