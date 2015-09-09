@@ -20,26 +20,20 @@ groupsController.create = function(req, res, next) {
     });
 };
 
-function addUserToGroup(user, group, next) {
-    user.getUidByUsername(user.username, function (err, user) {
+function addUserToGroup(userData, groupName, next) {
+    user.getUidByUsername(userData.username, function (err, userId) {
         if (err) return next(err);
+        if (!userId) return next();
 
-        console.log("GROUPS: ", groups);
-        console.log("USER: ", user);
-
-        next();
-        /* groups.join({}, function (err) {
+        groups.join(groupName, userId, function (err) {
             if (err) return next(err);
 
             next();
-        }); */
+        });
     });
 }
 
 groupsController.addUser = function(req, res, next) {
-    console.log("ADD USERS: ", req.body);
-    console.log("GROUP: ", req.params.name);
-    console.log("USER MODEL: ", user);
     var users = req.body.users;
     var group = req.params.name;
     if (!group || !users || !users.length)
