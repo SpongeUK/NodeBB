@@ -27,6 +27,7 @@ function addUserToGroup(user, group, next) {
         console.log("GROUPS: ", groups);
         console.log("USER: ", user);
 
+        next();
         /* groups.join({}, function (err) {
             if (err) return next(err);
 
@@ -36,6 +37,8 @@ function addUserToGroup(user, group, next) {
 }
 
 groupsController.addUser = function(req, res, next) {
+    console.log("ADD USERS: ", req.body);
+    console.log("GROUP: ", req.params.name);
     var users = req.body.users;
     var group = req.params.name;
     if (!group || !users || !users.length)
