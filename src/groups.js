@@ -46,6 +46,15 @@ var async = require('async'),
 			}
 		};
 
+    Groups.existsByName = function (name, callback) {
+        Groups.get(name, {}, function (err, groupRecord) {
+            if (err || !groupRecord)
+                return callback(null, false);
+
+            callback(null, true);
+        });
+    };
+
 	Groups.internals = internals;
 
 	var isPrivilegeGroupRegex = /^cid:\d+:privileges:[\w:]+$/;

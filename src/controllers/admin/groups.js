@@ -13,10 +13,18 @@ var async = require('async'),
 var groupsController = {};
 
 groupsController.create = function(req, res, next) {
-    groups.create({ name: req.params.name, description: req.body.description }, function(err) {
-        if (err) return next(err);
+    var groupName = req.params.name;
 
-        res.status(201).send();
+    groups.existsByName(groupName, function (err, exists) {
+        if (err) return next(err);
+        if (!!exists)
+            return res.status(400).send({ "msg": "Group " + groupName + " already exists" });
+
+        groups.create({ name: groupName, description: req.body.description }, function(err) {
+            if (err) return next(err);
+
+            res.status(201).send();
+        });
     });
 };
 
