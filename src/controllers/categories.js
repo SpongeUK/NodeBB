@@ -8,12 +8,45 @@ var categoriesController = {},
 	db = require('../database'),
 	privileges = require('../privileges'),
 	user = require('../user'),
+	groups = require('../groups'),
 	categories = require('../categories'),
 	meta = require('../meta'),
 	plugins = require('../plugins'),
 	pagination = require('../pagination'),
 	helpers = require('./helpers'),
 	utils = require('../../public/src/utils');
+
+function removeAllPrivs(categoryId, member, callback) {
+    var privileges = [ "groups:moderate", "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+
+    async.each(privileges, function(privilege, next) {
+        groups.leave('cid:' + categoryId + ':privileges:' + privilege, member, next);
+    }, callback);
+}
+
+function addUserPrivs(categoryId, member, callback) {
+    var privileges = [ "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+
+    async.each(privileges, function(privilege, next) {
+        groups.join('cid:' + categoryId + ':privileges:' + privilege, member, next);
+    }, callback);
+}
+
+function configurePrivileges(category, callback) {
+    removeAllPrivs(category.cid, 'registered-users', function (err) {
+        if (err) return callback(err);
+
+        removeAllPrivs(category.cid, 'guests', function (err) {
+            if (err) return callback(err);
+
+            addUserPrivs(category.cid, category.name, function (err) {
+                if (err) return callback(err);
+
+                callback();
+            });
+        });
+    });
+}
 
 categoriesController.create = function(req, res, next) {
     var categoryName = req.params.name;
@@ -26,7 +59,15 @@ categoriesController.create = function(req, res, next) {
         categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments" }, function(err) {
             if (err) return next(err);
 
-            res.status(201).send();
+            categories.getByName(categoryName, function (err, category) {
+                if (err) return next (err);
+
+                configurePrivileges(category, function (err) {
+                    if (err) return next(err);
+
+                    res.status(201).send();
+                });
+            });
         });
     });
 };
