@@ -3,6 +3,7 @@
 
 var async = require('async'),
 	nconf = require('nconf'),
+    _ = require('lodash'),
 
 	db = require('./database'),
 	user = require('./user'),
@@ -24,6 +25,14 @@ var async = require('async'),
 	Categories.exists = function(cid, callback) {
 		db.isSortedSetMember('categories:cid', cid, callback);
 	};
+
+    Categories.existsByName = function (name, callback) {
+        Categories.getAllCategories(null, function (err, existingCategories) {
+            if (err) return next(err);
+
+            callback(null, _.some(existingCategories, { "name": name }));
+        });
+    };
 
 	Categories.getCategoryById = function(data, callback) {
 		Categories.getCategories([data.cid], data.uid, function(err, categories) {

@@ -13,6 +13,7 @@ module.exports =  function(app, middleware, controllers) {
 
     router.post('/group/create/:name', middleware.validateRequestSource, controllers.admin.groups.create);
     router.post('/group/:name/addUsers', middleware.validateRequestSource, controllers.admin.groups.addUser);
+    router.post('/category/create/:name', middleware.validateRequestSource, controllers.categories.create);
 
 	router.get('/config', middleware.applyCSRF, controllers.api.getConfig);
 	router.get('/widgets/render', controllers.api.renderWidgets);

@@ -15,6 +15,21 @@ var categoriesController = {},
 	helpers = require('./helpers'),
 	utils = require('../../public/src/utils');
 
+categoriesController.create = function(req, res, next) {
+    var categoryName = req.params.name;
+
+    categories.existsByName(categoryName, function (err, exists) {
+        if (err) return next(err);
+        if (exists)
+            return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
+
+        categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments" }, function(err) {
+            if (err) return next(err);
+
+            res.status(201).send();
+        });
+    });
+};
 
 categoriesController.list = function(req, res, next) {
 	async.parallel({
