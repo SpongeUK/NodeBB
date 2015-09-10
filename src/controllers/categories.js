@@ -10,6 +10,7 @@ var categoriesController = {},
 	user = require('../user'),
 	groups = require('../groups'),
 	categories = require('../categories'),
+	topics = require('../topics'),
 	meta = require('../meta'),
 	plugins = require('../plugins'),
 	pagination = require('../pagination'),
@@ -48,6 +49,22 @@ function configurePrivileges(category, callback) {
     });
 }
 
+function createDiscussionTopic(category, callback) {
+    topics.post({
+        uid: 1,
+        title: "General discussion for " + category.name,
+        content: "This topic has been created for general discussion within the " + category.name + " group.",
+        cid: category.cid,
+        thumb: "",
+        category_id: category._id,
+        tags: []
+    }, function (err) {
+        if (err) return callback(err);
+
+        callback();
+    });
+}
+
 categoriesController.create = function(req, res, next) {
     var categoryName = req.params.name;
 
@@ -65,7 +82,11 @@ categoriesController.create = function(req, res, next) {
                 configurePrivileges(category, function (err) {
                     if (err) return next(err);
 
-                    res.status(201).send();
+                    createDiscussionTopic(category, function (err) {
+                        if (err) return next(err);
+
+                        res.status(201).send();
+                    });
                 });
             });
         });
