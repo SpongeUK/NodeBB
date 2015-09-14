@@ -53,6 +53,7 @@ function createDiscussionTopic(category, callback) {
     topics.post({
         uid: 1,
         title: "General discussion for " + category.name,
+        handle: "general-" + category.name,
         content: "This topic has been created for general discussion within the " + category.name + " group.",
         cid: category.cid,
         thumb: "",

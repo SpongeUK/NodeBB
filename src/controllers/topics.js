@@ -16,6 +16,23 @@ var topicsController = {},
 	pagination = require('../pagination'),
 	utils = require('../../public/src/utils');
 
+topicsController.createIfNotExists = function (req, res, callback) {
+    topics.post({
+        uid: 1,
+        title: "General discussion for " + category.name,
+        handle: "general-" + category.name,
+        content: "This topic has been created for general discussion within the " + category.name + " group.",
+        cid: category.cid,
+        thumb: "",
+        category_id: category._id,
+        tags: []
+    }, function (err) {
+        if (err) return callback(err);
+
+        callback();
+    });
+};
+
 topicsController.get = function(req, res, callback) {
 	var tid = req.params.topic_id,
 		sort = req.query.sort,
