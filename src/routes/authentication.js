@@ -63,9 +63,11 @@
 			});
 
 			router.post('/register', [ Auth.middleware.applyCSRF ], controllers.authentication.register);
-			router.post('/registerMany', Auth.middleware.validateRequestSource, controllers.authentication.registerMany);
 			router.post('/login', Auth.middleware.applyCSRF, controllers.authentication.login);
 			router.post('/logout', Auth.middleware.applyCSRF, controllers.authentication.logout);
+
+            router.post('/registerMany', Auth.middleware.validateRequestSource, controllers.authentication.registerMany);
+            router.post('/loginRedirect', Auth.middleware.validateRequestSource, controllers.authentication.login);
 
 			hotswap.replace('auth', router);
 			if (typeof callback === 'function') {
