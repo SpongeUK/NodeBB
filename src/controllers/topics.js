@@ -19,7 +19,7 @@ var topicsController = {},
 
 topicsController.createIfNotExists = function (req, res, callback) {
     var categoryName = req.params.name;
-    var handle = req.params.handle;
+    var slug = req.params.slug;
     var username = req.body.username;
     var title = req.body.title;
     var isPrivate = req.body.isPrivate || false;
@@ -35,14 +35,13 @@ topicsController.createIfNotExists = function (req, res, callback) {
             var topic = {
                 uid: 1,
                 title: title,
-                handle: handle,
+                slug: slug,
                 content: "This topic has been created for " + title,
                 cid: category.cid,
                 thumb: "",
                 category_id: category._id,
                 tags: []
             };
-            console.log("CREATING TOPIC: ", topic);
             topics.post(topic, function (err) {
                 if (err) return callback(err);
 

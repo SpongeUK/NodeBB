@@ -24,7 +24,7 @@ module.exports = function(Topics) {
 				db.incrObjectField('global', 'nextTid', next);
 			},
 			function(tid, next) {
-				var slug = utils.slugify(data.title);
+				var slug = (data.slug) ? data.slug : utils.slugify(data.title);
 
 				if (!slug.length) {
 					return callback(new Error('[[error:invalid-title]]'));
@@ -128,7 +128,7 @@ module.exports = function(Topics) {
 			},
 			function(filteredData, next) {
 				data = filteredData;
-				Topics.create({uid: data.uid, title: data.title, cid: data.cid, thumb: data.thumb, tags: data.tags, timestamp: data.timestamp}, next);
+				Topics.create({uid: data.uid, slug: data.slug, title: data.title, cid: data.cid, thumb: data.thumb, tags: data.tags, timestamp: data.timestamp}, next);
 			},
 			function(tid, next) {
 				Topics.reply({uid: data.uid, tid: tid, handle: data.handle, content: data.content, timestamp: data.timestamp, req: data.req}, next);

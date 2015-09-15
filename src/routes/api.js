@@ -16,7 +16,7 @@ module.exports =  function(app, middleware, controllers) {
     router.post('/category/create/:name', middleware.validateRequestSource, controllers.categories.create);
     router.post('/category/:name/moderate', middleware.validateRequestSource, controllers.categories.grantModeratorPrivs);
     router.post('/category/:name/revoke', middleware.validateRequestSource, controllers.categories.revokeModeratorPrivs);
-    router.post('/category/:name/topic/:handle/create', middleware.validateRequestSource, controllers.topics.createIfNotExists);
+    router.post('/category/:name/topic/:slug/create', middleware.validateRequestSource, controllers.topics.createIfNotExists);
 
 	router.get('/config', middleware.applyCSRF, controllers.api.getConfig);
 	router.get('/widgets/render', controllers.api.renderWidgets);
