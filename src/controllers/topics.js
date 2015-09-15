@@ -22,6 +22,12 @@ topicsController.createIfNotExists = function (req, res, callback) {
     var handle = req.params.handle;
     var username = req.body.username;
     var title = req.body.title;
+    var isPrivate = req.body.isPrivate || false;
+
+    console.log("CATEGORY NAME: ", categoryName);
+    console.log("HANDLE: ", handle);
+    console.log("USERNAME: ", username);
+    console.log("TITLE: ", title);
 
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
