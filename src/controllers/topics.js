@@ -24,22 +24,15 @@ topicsController.createIfNotExists = function (req, res, callback) {
     var title = req.body.title;
     var isPrivate = req.body.isPrivate || false;
 
-    console.log("CATEGORY NAME: ", categoryName);
-    console.log("HANDLE: ", handle);
-    console.log("USERNAME: ", username);
-    console.log("TITLE: ", title);
-
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
-
-        console.log("GOT CATEGORY: ", category);
+        if (!category) return callback(new Error("Category not found"));
 
         user.getUidByUsername(username, function (err, uid) {
             if (err) return callback(err);
+            if (!uid) return callback("User not found");
 
-            console.log("GOT UID: ", uid);
-
-            topics.post({
+            var topic = {
                 uid: 1,
                 title: title,
                 handle: handle,
@@ -48,7 +41,9 @@ topicsController.createIfNotExists = function (req, res, callback) {
                 thumb: "",
                 category_id: category._id,
                 tags: []
-            }, function (err) {
+            };
+            console.log("CREATING TOPIC: ", topic);
+            topics.post(topic, function (err) {
                 if (err) return callback(err);
 
                 callback();
