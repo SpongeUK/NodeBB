@@ -32,8 +32,12 @@ topicsController.createIfNotExists = function (req, res, callback) {
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
 
+        console.log("GOT CATEGORY: ", category);
+
         user.getUidByUsername(username, function (err, uid) {
             if (err) return callback(err);
+
+            console.log("GOT UID: ", uid);
 
             topics.post({
                 uid: 1,
