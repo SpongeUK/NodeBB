@@ -14,22 +14,36 @@ var topicsController = {},
 	plugins = require('../plugins'),
 	helpers = require('./helpers'),
 	pagination = require('../pagination'),
+    categories = require('../categories'),
 	utils = require('../../public/src/utils');
 
 topicsController.createIfNotExists = function (req, res, callback) {
-    topics.post({
-        uid: 1,
-        title: "General discussion for " + category.name,
-        handle: "general-" + category.name,
-        content: "This topic has been created for general discussion within the " + category.name + " group.",
-        cid: category.cid,
-        thumb: "",
-        category_id: category._id,
-        tags: []
-    }, function (err) {
+    var categoryName = req.params.name;
+    var handle = req.params.handle;
+    var username = req.body.username;
+    var title = req.body.title;
+
+    categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
 
-        callback();
+        user.getUidByUsername(username, function (err, uid) {
+            if (err) return callback(err);
+
+            topics.post({
+                uid: 1,
+                title: title,
+                handle: handle,
+                content: "This topic has been created for " + title,
+                cid: category.cid,
+                thumb: "",
+                category_id: category._id,
+                tags: []
+            }, function (err) {
+                if (err) return callback(err);
+
+                callback();
+            });
+        });
     });
 };
 
