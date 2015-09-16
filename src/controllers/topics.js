@@ -22,7 +22,7 @@ topicsController.createPublicTopic = function (req, res, callback) {
     var childCategoryName = req.params.child;
     var slug = req.params.slug;
     var username = req.body.username;
-    var title = req.body.title;
+    var title = req.body.title + " - " + username;
 
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
@@ -54,6 +54,49 @@ topicsController.createPublicTopic = function (req, res, callback) {
     });
 };
 
+function postTopic(params, callback) {
+    user.getUidByUsername(params.username, function (err, uid) {
+        if (err) return callback(err);
+        if (!uid) return callback("User not found");
+
+        topics.post({
+            uid: uid,
+            title: params.title,
+            slug: params.slug,
+            content: "This topic has been created for " + params.title,
+            cid: params.cid,
+            thumb: "",
+            tags: []
+        }, function (err) {
+            if (err) return callback(err);
+
+            callback();
+        });
+    });
+}
+
+function createChildCategoryAndPostTopic(params, callback) {
+    categories.create({
+        name: params.categoryName,
+        description: params.description,
+        icon: "fa-comments",
+        parentCid: params.parentCategory.cid
+    }, function(err) {
+        if (err) return callback(err);
+
+        categories.getByName(params.categoryName, function (err, category) {
+            if (err) return callback (err);
+
+            postTopic({
+                username: params.username,
+                title: params.title,
+                slug: params.slug,
+                cid: category.cid
+            }, callback);
+        });
+    });
+}
+
 topicsController.createPrivateTopic = function (req, res, callback) {
     var categoryName = req.params.name;
     var childCategoryName = req.params.child;
@@ -61,7 +104,40 @@ topicsController.createPrivateTopic = function (req, res, callback) {
     var username = req.body.username;
     var title = req.body.title;
 
-    res.status(200).send();
+    categories.getByName(categoryName, function (err, category) {
+        if (err) return callback(err);
+        if (!category) return callback(new Error("Category not found"));
+
+        categories.getByNameAndParentCid(childCategoryName, category.cid, function (err, childCategory) {
+            if (err) return callback(err);
+
+            if (!childCategory) {
+                createChildCategoryAndPostTopic({
+                    username: username,
+                    title: title,
+                    slug: slug,
+                    categoryName: childCategoryName,
+                    parentCategory: category,
+                    description: req.body.description
+                }, function (err) {
+                    if (err) return callback(err);
+
+                    callback();
+                });
+            } else {
+                postTopic({
+                    username: username,
+                    title: title,
+                    slug: slug,
+                    cid: childCategory.cid
+                }, function (err) {
+                    if (err) return callback(err);
+
+                    callback();
+                });
+            }
+        });
+    });
 };
 
 topicsController.get = function(req, res, callback) {
