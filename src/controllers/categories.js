@@ -107,8 +107,38 @@ categoriesController.create = function(req, res, next) {
 };
 
 categoriesController.createChild = function(req, res, next) {
-    console.log("CREATE CHILD CATEGORY ", req.params.child, " IN ", req.params.name);
-    res.status(201).send();
+    var parentCategoryName = req.params.name;
+    var categoryName = req.params.child;
+
+    categories.existsByName(parentCategoryName, function (err, exists) {
+        if (err) return next(err);
+        if (!exists)
+            return res.status(400).send({ "msg": "Parent category " + parentCategoryName + " does not exist" });
+
+        categories.existsByName(categoryName, function (err, exists) {
+            if (err) return next(err);
+            if (exists)
+                return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
+
+            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments" }, function(err) {
+                if (err) return next(err);
+
+                categories.getByName(categoryName, function (err, category) {
+                    if (err) return next (err);
+
+                    configurePrivileges(category, function (err) {
+                        if (err) return next(err);
+
+                        createDiscussionTopic(category, function (err) {
+                            if (err) return next(err);
+
+                            res.status(201).send();
+                        });
+                    });
+                });
+            });
+        });
+    });
 };
 
 categoriesController.grantModeratorPrivs = function (req, res, next) {
