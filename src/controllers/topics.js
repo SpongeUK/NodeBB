@@ -37,7 +37,7 @@ topicsController.createPublicTopic = function (req, res, callback) {
                 if (!uid) return callback("User not found");
 
                 topics.post({
-                    uid: 1,
+                    uid: uid,
                     title: title,
                     slug: slug,
                     content: "This topic has been created for " + title,
