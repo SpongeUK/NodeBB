@@ -132,7 +132,7 @@ categoriesController.createChild = function(req, res, next) {
                 categories.getByName(categoryName, function (err, category) {
                     if (err) return next (err);
 
-                    configurePrivileges(category, parentCategory, function (err) {
+                    configurePrivileges(category, parentCategoryName, function (err) {
                         if (err) return next(err);
 
                         createDiscussionTopic(category, function (err) {
