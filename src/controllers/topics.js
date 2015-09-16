@@ -39,7 +39,6 @@ topicsController.createIfNotExists = function (req, res, callback) {
                 content: "This topic has been created for " + title,
                 cid: category.cid,
                 thumb: "",
-                category_id: category._id,
                 tags: []
             };
             topics.post(topic, function (err) {
