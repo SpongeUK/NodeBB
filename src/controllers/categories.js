@@ -106,6 +106,11 @@ categoriesController.create = function(req, res, next) {
     });
 };
 
+categoriesController.createChild = function(req, res, next) {
+    console.log("CREATE CHILD CATEGORY ", req.params.child, " IN ", req.params.name);
+    res.status(201).send();
+};
+
 categoriesController.grantModeratorPrivs = function (req, res, next) {
     var categoryName = req.params.name;
     var username = req.body.username;
