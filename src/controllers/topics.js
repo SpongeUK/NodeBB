@@ -17,37 +17,51 @@ var topicsController = {},
     categories = require('../categories'),
 	utils = require('../../public/src/utils');
 
-topicsController.createIfNotExists = function (req, res, callback) {
+topicsController.createPublicTopic = function (req, res, callback) {
     var categoryName = req.params.name;
+    var childCategoryName = req.params.child;
     var slug = req.params.slug;
     var username = req.body.username;
     var title = req.body.title;
-    var isPrivate = req.body.isPrivate || false;
 
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
         if (!category) return callback(new Error("Category not found"));
 
-        user.getUidByUsername(username, function (err, uid) {
+        categories.getByNameAndParentCid({ name: childCategoryName, parentCid: category.cid }, function (err, childCategory) {
             if (err) return callback(err);
-            if (!uid) return callback("User not found");
+            if (!childCategory) return callback(new Error("Category not found"));
 
-            var topic = {
-                uid: 1,
-                title: title,
-                slug: slug,
-                content: "This topic has been created for " + title,
-                cid: category.cid,
-                thumb: "",
-                tags: []
-            };
-            topics.post(topic, function (err) {
+            user.getUidByUsername(username, function (err, uid) {
                 if (err) return callback(err);
+                if (!uid) return callback("User not found");
 
-                callback();
+                topics.post({
+                    uid: 1,
+                    title: title,
+                    slug: slug,
+                    content: "This topic has been created for " + title,
+                    cid: childCategory.cid,
+                    thumb: "",
+                    tags: []
+                }, function (err) {
+                    if (err) return callback(err);
+
+                    callback();
+                });
             });
         });
     });
+};
+
+topicsController.createPrivateTopic = function (req, res, callback) {
+    var categoryName = req.params.name;
+    var childCategoryName = req.params.child;
+    var slug = req.params.slug;
+    var username = req.body.username;
+    var title = req.body.title;
+
+    res.status(200).send();
 };
 
 topicsController.get = function(req, res, callback) {

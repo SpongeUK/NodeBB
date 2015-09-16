@@ -42,6 +42,14 @@ var async = require('async'),
         });
     };
 
+    Categories.getByNameAndParentCid = function (name, parentCid, callback) {
+        Categories.getAllCategories(null, function (err, existingCategories) {
+            if (err) return next(err);
+
+            callback(null, _.find(existingCategories, { "name": name, "parentCid": parentCid }));
+        });
+    };
+
 	Categories.getCategoryById = function(data, callback) {
 		Categories.getCategories([data.cid], data.uid, function(err, categories) {
 			if (err || !Array.isArray(categories) || !categories[0]) {
