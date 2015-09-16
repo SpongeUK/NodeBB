@@ -42,14 +42,20 @@ function addModeratorPrivs(categoryId, groupName, callback) {
     }, callback);
 }
 
-function configurePrivileges(category, callback) {
+function configurePrivileges(category, parentCategory, callback) {
+    if (!callback && typeof parentCategory === "function") {
+        callback = parentCategory;
+        parentCategory = undefined;
+    }
+
     removeAllPrivs(category.cid, 'registered-users', function (err) {
         if (err) return callback(err);
 
         removeAllPrivs(category.cid, 'guests', function (err) {
             if (err) return callback(err);
 
-            addUserPrivs(category.cid, category.name, function (err) {
+            var member = (!parentCategory) ? category.name : parentCategory;
+            addUserPrivs(category.cid, member, function (err) {
                 if (err) return callback(err);
 
                 addModeratorPrivs(category.cid, category.name, function (err) {
@@ -126,7 +132,7 @@ categoriesController.createChild = function(req, res, next) {
                 categories.getByName(categoryName, function (err, category) {
                     if (err) return next (err);
 
-                    configurePrivileges(category, function (err) {
+                    configurePrivileges(category, parentCategory, function (err) {
                         if (err) return next(err);
 
                         createDiscussionTopic(category, function (err) {
