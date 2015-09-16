@@ -28,7 +28,7 @@ topicsController.createPublicTopic = function (req, res, callback) {
         if (err) return callback(err);
         if (!category) return callback(new Error("Category not found"));
 
-        categories.getByNameAndParentCid({ name: childCategoryName, parentCid: category.cid }, function (err, childCategory) {
+        categories.getByNameAndParentCid(childCategoryName, category.cid, function (err, childCategory) {
             if (err) return callback(err);
             if (!childCategory) return callback(new Error("Category not found"));
 
