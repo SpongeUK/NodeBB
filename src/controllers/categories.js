@@ -110,9 +110,9 @@ categoriesController.createChild = function(req, res, next) {
     var parentCategoryName = req.params.name;
     var categoryName = req.params.child;
 
-    categories.existsByName(parentCategoryName, function (err, exists) {
+    categories.getByName(parentCategoryName, function (err, parentCategory) {
         if (err) return next(err);
-        if (!exists)
+        if (!parentCategory)
             return res.status(400).send({ "msg": "Parent category " + parentCategoryName + " does not exist" });
 
         categories.existsByName(categoryName, function (err, exists) {
@@ -120,7 +120,7 @@ categoriesController.createChild = function(req, res, next) {
             if (exists)
                 return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
 
-            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments" }, function(err) {
+            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid }, function(err) {
                 if (err) return next(err);
 
                 categories.getByName(categoryName, function (err, category) {
