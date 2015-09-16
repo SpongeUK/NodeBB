@@ -9,11 +9,11 @@ var async = require('async'),
 	pagination = require('../../pagination'),
 	helpers = require('../helpers');
 
-
 var groupsController = {};
 
 groupsController.create = function(req, res, next) {
     var groupName = req.params.name;
+    var moderatorsGroupName = groupName + "-moderators";
 
     groups.existsByName(groupName, function (err, exists) {
         if (err) return next(err);
@@ -23,7 +23,16 @@ groupsController.create = function(req, res, next) {
         groups.create({ name: groupName, description: req.body.description }, function(err) {
             if (err) return next(err);
 
-            res.status(201).send();
+            groups.existsByName(moderatorsGroupName, function (err, modExists) {
+                if (err) return next(err);
+                if (modExists) return res.status(201).send();
+
+                groups.create({ name: moderatorsGroupName, description: "Moderators for " + groupName }, function(err) {
+                    if (err) return next(err);
+
+                    res.status(201).send();
+                });
+            });
         });
     });
 };

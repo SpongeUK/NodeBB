@@ -33,6 +33,15 @@ function addUserPrivs(categoryId, member, callback) {
     }, callback);
 }
 
+function addModeratorPrivs(categoryId, groupName, callback) {
+    var privileges = [ "groups:mods", "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+    var member = groupName + "-moderators";
+
+    async.each(privileges, function(privilege, next) {
+        groups.join('cid:' + categoryId + ':privileges:' + privilege, member, next);
+    }, callback);
+}
+
 function configurePrivileges(category, callback) {
     removeAllPrivs(category.cid, 'registered-users', function (err) {
         if (err) return callback(err);
@@ -43,7 +52,11 @@ function configurePrivileges(category, callback) {
             addUserPrivs(category.cid, category.name, function (err) {
                 if (err) return callback(err);
 
-                callback();
+                addModeratorPrivs(category.cid, category.name, function (err) {
+                    if (err) return callback(err);
+
+                    callback();
+                });
             });
         });
     });
