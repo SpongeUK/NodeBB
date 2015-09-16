@@ -15,11 +15,10 @@ module.exports =  function(app, middleware, controllers) {
     // Launch and learn API routes
     router.post('/group/create/:name', middleware.validateRequestSource, controllers.admin.groups.create);
     router.post('/group/:name/addUsers', middleware.validateRequestSource, controllers.admin.groups.addUser);
-
     router.post('/category/create/:name', middleware.validateRequestSource, controllers.categories.create);
+    // router.post('/category/create/:name/child/:child', middleware.validateRequestSource, controllers.categories.createChild);
     router.post('/category/:name/moderate', middleware.validateRequestSource, controllers.categories.grantModeratorPrivs);
     router.post('/category/:name/revoke', middleware.validateRequestSource, controllers.categories.revokeModeratorPrivs);
-
     router.post('/category/:name/topic/:slug/create', middleware.validateRequestSource, controllers.topics.createIfNotExists);
 
 

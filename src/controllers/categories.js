@@ -106,18 +106,6 @@ categoriesController.create = function(req, res, next) {
     });
 };
 
-function grantModeratorPrivsById(categoryId, member, callback) {
-    var privileges = [ "mods", "topics:reply", "topics:create", "read", "find" ];
-
-    async.each(privileges, function(privilege, next) {
-        groups.join('cid:' + categoryId + ':privileges:' + privilege, member, next);
-    }, callback);
-}
-
-function revokeModeratorPrivsById(categoryId, member, callback) {
-    groups.leave('cid:' + categoryId + ':privileges:mods', member, callback);
-}
-
 categoriesController.grantModeratorPrivs = function (req, res, next) {
     var categoryName = req.params.name;
     var username = req.body.username;
@@ -125,14 +113,10 @@ categoriesController.grantModeratorPrivs = function (req, res, next) {
     user.getUidByUsername(username, function (err, uid) {
         if (err) return next(err);
 
-        categories.getByName(categoryName, function (err, category) {
+        groups.join(categoryName + "-moderators", uid, function (err) {
             if (err) return next(err);
 
-            grantModeratorPrivsById(category.cid, uid, function (err) {
-                if (err) return next(err);
-
-                res.status(200).send();
-            });
+            next();
         });
     });
 };
@@ -144,14 +128,10 @@ categoriesController.revokeModeratorPrivs = function (req, res, next) {
     user.getUidByUsername(username, function (err, uid) {
         if (err) return next(err);
 
-        categories.getByName(categoryName, function (err, category) {
+        groups.leave(categoryName + "-moderators", uid, function (err) {
             if (err) return next(err);
 
-            revokeModeratorPrivsById(category.cid, uid, function (err) {
-                if (err) return next(err);
-
-                res.status(200).send();
-            });
+            next();
         });
     });
 };
