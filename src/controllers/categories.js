@@ -34,7 +34,7 @@ function addUserPrivs(categoryId, member, callback) {
 }
 
 function addModeratorPrivs(categoryId, groupName, callback) {
-    var privileges = [ "groups:mods", "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+    var privileges = [ "groups:moderate", "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
     var member = groupName + "-moderators";
 
     async.each(privileges, function(privilege, next) {
