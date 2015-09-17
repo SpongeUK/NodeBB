@@ -4,6 +4,8 @@ var async = require('async'),
 	db = require('../database'),
 	meta = require('../meta');
 
+var settings = require('../../settings');
+
 module.exports = function(User) {
 
 	User.isReadyToPost = function(uid, callback) {
@@ -49,11 +51,13 @@ module.exports = function(User) {
 			}
 
 			var lastposttime = userData.lastposttime || 0;
+            var newbiePostDelay = settings.newbiePostDelay || 0;
+            var postDelay = settings.postDelay || 0;
 
-			if (parseInt(meta.config.newbiePostDelay, 10) > 0 && parseInt(meta.config.newbiePostDelayThreshold, 10) > parseInt(userData.reputation, 10) && now - parseInt(lastposttime, 10) < parseInt(meta.config.newbiePostDelay, 10) * 1000) {
-				return callback(new Error('[[error:too-many-posts-newbie, ' + meta.config.newbiePostDelay + ', ' + meta.config.newbiePostDelayThreshold + ']]'));
-			} else if (now - parseInt(lastposttime, 10) < parseInt(meta.config.postDelay, 10) * 1000) {
-				return callback(new Error('[[error:too-many-posts, ' + meta.config.postDelay + ']]'));
+			if (newbiePostDelay > 0 && parseInt(meta.config.newbiePostDelayThreshold, 10) > parseInt(userData.reputation, 10) && now - parseInt(lastposttime, 10) < parseInt(meta.config.newbiePostDelay, 10) * 1000) {
+				return callback(new Error('[[error:too-many-posts-newbie, ' + newbiePostDelay + ', ' + meta.config.newbiePostDelayThreshold + ']]'));
+			} else if (now - parseInt(lastposttime, 10) < postDelay * 1000) {
+				return callback(new Error('[[error:too-many-posts, ' + postDelay + ']]'));
 			}
 
 			callback();
