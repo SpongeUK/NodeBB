@@ -75,6 +75,51 @@ function postTopic(params, callback) {
     });
 }
 
+function removeAllPrivs(categoryId, member, callback) {
+    var privileges = [ "groups:moderate", "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+
+    async.each(privileges, function(privilege, next) {
+        groups.leave('cid:' + categoryId + ':privileges:' + privilege, member, next);
+    }, callback);
+}
+
+function addUserPrivs(categoryId, member, callback) {
+    var privileges = [ "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+
+    async.each(privileges, function(privilege, next) {
+        groups.join('cid:' + categoryId + ':privileges:' + privilege, member, next);
+    }, callback);
+}
+
+function addModeratorPrivs(categoryId, groupName, callback) {
+    var privileges = [ "groups:moderate", "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+    var member = groupName + "-moderators";
+
+    async.each(privileges, function(privilege, next) {
+        groups.join('cid:' + categoryId + ':privileges:' + privilege, member, next);
+    }, callback);
+}
+
+function configurePrivateCategoryPrivileges(category, userId, callback) {
+    removeAllPrivs(category.cid, 'registered-users', function (err) {
+        if (err) return callback(err);
+
+        removeAllPrivs(category.cid, 'guests', function (err) {
+            if (err) return callback(err);
+
+            addUserPrivs(category.cid, userId, function (err) {
+                if (err) return callback(err);
+
+                addModeratorPrivs(category.cid, category.name, function (err) {
+                    if (err) return callback(err);
+
+                    callback();
+                });
+            });
+        });
+    });
+}
+
 function createChildCategoryAndPostTopic(params, callback) {
     categories.create({
         name: params.categoryName,
@@ -87,12 +132,28 @@ function createChildCategoryAndPostTopic(params, callback) {
         categories.getByName(params.categoryName, function (err, category) {
             if (err) return callback (err);
 
-            postTopic({
-                username: params.username,
-                title: params.title,
-                slug: params.slug,
-                cid: category.cid
-            }, callback);
+            user.getUidByUsername(params.username, function (err, uid) {
+                if (err) return callback(err);
+                if (!uid) return callback("User not found");
+
+                configurePrivateCategoryPrivileges(category, uid, function (err) {
+                    if (err) return callback(err);
+
+                    topics.post({
+                        uid: uid,
+                        title: params.title,
+                        slug: params.slug,
+                        content: "This topic has been created for " + params.title,
+                        cid: params.cid,
+                        thumb: "",
+                        tags: []
+                    }, function (err) {
+                        if (err) return callback(err);
+
+                        callback();
+                    });
+                });
+            });
         });
     });
 }
