@@ -100,6 +100,7 @@ function registerUser (userData, done) {
 			next();
 		},
 		function (next) {
+            console.log("CALLING CREATE FOR: ", userData);
 			user.createIfNotExists(userData, done);
 		}
 	]);
@@ -114,6 +115,9 @@ authenticationController.registerMany = function (req, res, done) {
     async.each(newUsers, function (user, callback) {
     	registerUser(user, callback);
     }, function (err) {
+        if (err) {
+            console.log("ERROR: ", err);
+        }
 		if (err) res.status(500).send(err);
 
 		res.status(201).send();

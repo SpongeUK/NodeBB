@@ -157,6 +157,7 @@ module.exports = function(User) {
                 if (err) return callback(err);
 
                 console.log("DONE CREATING USER");
+                callback();
             });
 		});
 	};
