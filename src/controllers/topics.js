@@ -85,7 +85,7 @@ function removeAllPrivs(categoryId, member, callback) {
 }
 
 function addUserPrivs(categoryId, member, callback) {
-    var privileges = [ "groups:topics:reply", "groups:topics:create", "groups:read", "groups:find" ];
+    var privileges = [ "topics:reply", "topics:create", "read", "find" ];
 
     async.each(privileges, function(privilege, next) {
         groups.join('cid:' + categoryId + ':privileges:' + privilege, member, next);
