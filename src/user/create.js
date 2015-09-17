@@ -49,6 +49,7 @@ module.exports = function(User) {
 				'status': 'online'
 			};
 
+            console.log("USER DATA VALID");
 			async.parallel({
 				renamedUsername: function(next) {
 					renameUsername(userData, next);
@@ -152,7 +153,11 @@ module.exports = function(User) {
 			if (exists) return callback();
 
             console.log("CREATING");
-			User.create(userData, callback);
+			User.create(userData, function (err) {
+                if (err) return callback(err);
+
+                console.log("DONE CREATING USER");
+            });
 		});
 	};
 
