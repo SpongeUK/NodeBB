@@ -132,6 +132,7 @@ function createChildCategoryAndPostTopic(params, callback) {
 
         categories.getByName(params.categoryName, function (err, category) {
             if (err) return callback (err);
+            if (!category) return callback(new Error("Failed to create category"));
 
             user.getUidByUsername(params.username, function (err, uid) {
                 if (err) return callback(err);
@@ -145,7 +146,7 @@ function createChildCategoryAndPostTopic(params, callback) {
                         title: params.title,
                         slug: params.slug,
                         content: "This topic has been created for " + params.title,
-                        cid: params.cid,
+                        cid: category.cid,
                         thumb: "",
                         tags: []
                     }, function (err) {
