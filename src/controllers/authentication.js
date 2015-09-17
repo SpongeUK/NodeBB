@@ -226,16 +226,15 @@ function continueLogin(req, res, next) {
 					plugins.fireHook('action:user.loggedIn', userData.uid);
 				}
 
+
+
                 var path = "/";
                 var slug = "" + req.body.slug;
-                console.log("SLUG: ", req.body.slug);
-                var tags = slug.split("-");
-                console.log("TAGS: ", tags);
-
-                search.search({ query: tags, searchIn: "tags" }, function (err, result) {
+                search.search({ query: slug, searchIn: "tags" }, function (err, result) {
                     if (err) console.log("ERROR: ", err);
                     console.log("RESULT: ", result);
                 });
+
 
 
                 if (!req.session.returnTo) {
