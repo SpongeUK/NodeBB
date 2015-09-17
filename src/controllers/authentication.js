@@ -12,6 +12,7 @@ var async = require('async'),
 	plugins = require('../plugins'),
 	utils = require('../../public/src/utils'),
 	Password = require('../password'),
+    search = require('../search'),
 
 	authenticationController = {};
 
@@ -156,6 +157,9 @@ authenticationController.login = function(req, res, next) {
 		req.session.returnTo = req.body.returnTo;
 	}
 
+    var slug = req.body.slug;
+    console.log("SLUG: ", slug);
+
 	if (plugins.hasListeners('action:auth.overrideLogin')) {
 		return continueLogin(req, res, next);
 	}
@@ -222,15 +226,27 @@ function continueLogin(req, res, next) {
 					plugins.fireHook('action:user.loggedIn', userData.uid);
 				}
 
-				if (!req.session.returnTo) {
-					// res.status(200).send(nconf.get('relative_path') + '/');
-                    res.redirect("/");
+                var path = "/";
+                var slug = "" + req.body.slug;
+                console.log("SLUG: ", req.body.slug);
+                var tags = slug.split("-");
+                console.log("TAGS: ", tags);
+
+                search.search({ query: tags, searchIn: "tags" }, function (err, result) {
+                    if (err) console.log("ERROR: ", err);
+                    console.log("RESULT: ", result);
+                });
+
+
+                if (!req.session.returnTo) {
+                    // res.status(200).send(nconf.get('relative_path') + '/');
+                    res.redirect(path);
 				} else {
 					var next = req.session.returnTo;
 					delete req.session.returnTo;
 
-                    res.redirect("/");
-					// res.status(200).send(next);
+                    res.redirect(path);
+                    // res.status(200).send(next);
 				}
 			});
 		}

@@ -37,6 +37,8 @@ topicsController.createPublicTopic = function (req, res, callback) {
                 if (err) return callback(err);
                 if (!uid) return callback("User not found");
 
+                var slug = "" + params.slug;
+                var tags = (!slug) ? [] : slug.split("-");
                 topics.post({
                     uid: uid,
                     title: title,
@@ -44,7 +46,7 @@ topicsController.createPublicTopic = function (req, res, callback) {
                     content: "This topic has been created for " + title,
                     cid: childCategory.cid,
                     thumb: "",
-                    tags: []
+                    tags: tags
                 }, function (err) {
                     if (err) return callback(err);
 
@@ -60,6 +62,8 @@ function postTopic(params, callback) {
         if (err) return callback(err);
         if (!uid) return callback("User not found");
 
+        var slug = "" + params.slug;
+        var tags = (!slug) ? [] : slug.split("-");
         topics.post({
             uid: uid,
             title: params.title,
@@ -67,7 +71,7 @@ function postTopic(params, callback) {
             content: "This topic has been created for " + params.title,
             cid: params.cid,
             thumb: "",
-            tags: []
+            tags: tags
         }, function (err) {
             if (err) return callback(err);
 
@@ -141,6 +145,8 @@ function createChildCategoryAndPostTopic(params, callback) {
                 configurePrivateCategoryPrivileges(category, uid, function (err) {
                     if (err) return callback(err);
 
+                    var slug = "" + params.slug;
+                    var tags = (!slug) ? [] : slug.split("-");
                     topics.post({
                         uid: uid,
                         title: params.title,
@@ -148,7 +154,7 @@ function createChildCategoryAndPostTopic(params, callback) {
                         content: "This topic has been created for " + params.title,
                         cid: category.cid,
                         thumb: "",
-                        tags: []
+                        tags: tags
                     }, function (err) {
                         if (err) return callback(err);
 
