@@ -38,13 +38,17 @@ groupsController.create = function(req, res, next) {
 };
 
 function addUserToGroup(userData, groupName, next) {
+    console.log("ADDING USER ", userData);
+
     user.getUidByUsername(userData.username, function (err, userId) {
         if (err) return next(err);
         if (!userId) return next();
+        console.log("USER ID: ", userId);
 
         groups.join(groupName, userId, function (err) {
             if (err) return next(err);
 
+            console.log("USER DONE");
             next();
         });
     });
@@ -53,12 +57,15 @@ function addUserToGroup(userData, groupName, next) {
 groupsController.addUser = function(req, res, next) {
     var users = req.body.users;
     var group = req.params.name;
+    console.log("ADDING USERS ", users, " TO GROUP ", group);
+
     if (!group || !users || !users.length)
         return res.status(400).send();
 
     async.each(users, function (user, callback) {
         addUserToGroup(user, group, callback);
     }, function (err) {
+        if (err) console.log("ERROR: ", err);
         if (err) res.status(500).send(err);
 
         res.status(200).send();
