@@ -81,8 +81,6 @@ authenticationController.register = function(req, res, next) {
 };
 
 function registerUser (userData, done) {
-    console.log("REGISTERING USER: ", userData);
-
 	async.waterfall([
 		function (next) {
 			if (!userData.email) {
@@ -100,7 +98,6 @@ function registerUser (userData, done) {
 			next();
 		},
 		function (next) {
-            console.log("CALLING CREATE FOR: ", userData);
 			user.createIfNotExists(userData, done);
 		}
 	]);
@@ -111,13 +108,9 @@ authenticationController.registerMany = function (req, res, done) {
     if (!newUsers || !newUsers.length)
         return res.status(400).send("No registrations provided");
 
-    console.log("REGISTERING USERS");
     async.each(newUsers, function (user, callback) {
     	registerUser(user, callback);
     }, function (err) {
-        if (err) {
-            console.log("ERROR: ", err);
-        }
 		if (err) res.status(500).send(err);
 
 		res.status(201).send();

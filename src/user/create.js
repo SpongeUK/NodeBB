@@ -49,7 +49,6 @@ module.exports = function(User) {
 				'status': 'online'
 			};
 
-            console.log("USER DATA VALID");
 			async.parallel({
 				renamedUsername: function(next) {
 					renameUsername(userData, next);
@@ -147,16 +146,12 @@ module.exports = function(User) {
 	User.createIfNotExists = function (userData, callback) {
 		var email = userData.email;
 
-        console.log("TRYING TO CREATE: ", userData);
 		User.getUidByEmail(email.toLowerCase(), function(err, exists) {
-            console.log("EXISTS: ", exists);
 			if (exists) return callback();
 
-            console.log("CREATING");
 			User.create(userData, function (err) {
                 if (err) return callback(err);
 
-                console.log("DONE CREATING USER");
                 callback();
             });
 		});

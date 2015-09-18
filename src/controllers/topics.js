@@ -37,6 +37,7 @@ topicsController.createPublicTopic = function (req, res, callback) {
                 if (err) return callback(err);
                 if (!uid) return callback("User not found");
 
+                console.log("CREATING WITH TAG ", slug);
                 topics.post({
                     uid: uid,
                     title: title,
@@ -60,6 +61,7 @@ function postTopic(params, callback) {
         if (err) return callback(err);
         if (!uid) return callback("User not found");
 
+        console.log("CREATING WITH TAG ", params.slug);
         topics.post({
             uid: uid,
             title: params.title,
@@ -141,6 +143,7 @@ function createChildCategoryAndPostTopic(params, callback) {
                 configurePrivateCategoryPrivileges(category, uid, function (err) {
                     if (err) return callback(err);
 
+                    console.log("CREATING WITH TAG ", params.slug);
                     topics.post({
                         uid: uid,
                         title: params.title,
