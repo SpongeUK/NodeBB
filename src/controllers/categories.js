@@ -154,10 +154,14 @@ categoriesController.grantModeratorPrivs = function (req, res, next) {
     user.getUidByUsername(username, function (err, uid) {
         if (err) return next(err);
 
-        groups.join(categoryName + "-moderators", uid, function (err) {
+        groups.leave(categoryName, uid, function (err) {
             if (err) return next(err);
 
-            next();
+            groups.join(categoryName + "-moderators", uid, function (err) {
+                if (err) return next(err);
+
+                next();
+            });
         });
     });
 };
@@ -172,7 +176,11 @@ categoriesController.revokeModeratorPrivs = function (req, res, next) {
         groups.leave(categoryName + "-moderators", uid, function (err) {
             if (err) return next(err);
 
-            next();
+            groups.join(categoryName, uid, function (err) {
+                if (err) return next(err);
+
+                next();
+            });
         });
     });
 };
