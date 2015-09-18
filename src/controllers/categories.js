@@ -185,6 +185,12 @@ categoriesController.revokeModeratorPrivs = function (req, res, next) {
     });
 };
 
+categoriesController.removeCategoryData = function(req, res, next) {
+    var category = req.params.name;
+    console.log("REMOVE CATEGORY: ", category);
+    res.status(200).send();
+};
+
 categoriesController.list = function(req, res, next) {
 	async.parallel({
 		header: function (next) {

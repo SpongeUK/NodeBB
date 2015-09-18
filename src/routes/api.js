@@ -20,6 +20,7 @@ module.exports =  function(app, middleware, controllers) {
     router.post('/category/:name/revoke', middleware.validateRequestSource, controllers.categories.revokeModeratorPrivs);
     router.post('/category/:name/child/:child/topic/:slug/create', middleware.validateRequestSource, controllers.topics.createPublicTopic);
     router.post('/category/:name/child/:child/topic/:slug/private', middleware.validateRequestSource, controllers.topics.createPrivateTopic);
+    router.post('/category/:name/remove', middleware.validateRequestSource, controllers.categories.removeCategoryData);
 
 
 	router.get('/config', middleware.applyCSRF, controllers.api.getConfig);
