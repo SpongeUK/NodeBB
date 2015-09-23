@@ -50,6 +50,36 @@ var async = require('async'),
         });
     };
 
+    Categories.getChildCategoriesByName = function (name, callback) {
+        Categories.getAllCategories(null, function (err, existingCategories) {
+            if (err) return next(err);
+            if (!existingCategories || !existingCategories.length) return callback(null, []);
+
+            var parent = _.find(existingCategories, { "name": name });
+            if (!parent) return callback(null, []);
+
+            callback(null, _.filter(existingCategories, { "parentCid": parent.cid }));
+        });
+    };
+
+    Categories.getCategoryAndChildrenByName = function (name, callback) {
+        Categories.getAllCategories(null, function (err, existingCategories) {
+            if (err) return next(err);
+            if (!existingCategories || !existingCategories.length) return callback(null, []);
+
+            var parent = _.find(existingCategories, { "name": name });
+            if (!parent) return callback(null, []);
+            var matchingCategories = [ parent ];
+
+            _.each(existingCategories, function (c) {
+                if (c.parentCid = parent.cid)
+                    matchingCategories.push(c);
+            });
+
+            callback(null, matchingCategories);
+        });
+    };
+
 	Categories.getCategoryById = function(data, callback) {
 		Categories.getCategories([data.cid], data.uid, function(err, categories) {
 			if (err || !Array.isArray(categories) || !categories[0]) {

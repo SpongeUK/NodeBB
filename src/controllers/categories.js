@@ -185,10 +185,69 @@ categoriesController.revokeModeratorPrivs = function (req, res, next) {
     });
 };
 
+function removeCategories(categories, next) {
+    if (!categories || !categories.length)
+        return next();
+
+    async.each(categories, function (item, callback) {
+        console.log("REMOVING CATEGORY ", item.name);
+        categories.purge(item.cid, function (err) {
+            if (err) return callback(err);
+
+            console.log("REMOVED CATEGORY ", item.name);
+            callback();
+        });
+    }, function (err) {
+        if (err) return next(err);
+
+        next();
+    });
+}
+
+function removeGroups(categories, next) {
+    if (!categories || !categories.length)
+        return next();
+
+    async.each(categories, function (item, callback) {
+        var moderatorGroupName = item.name + "-moderators";
+
+        console.log("REMOVING GROUP ", item.name);
+        groups.destroy(item.name, function (err) {
+            if (err) return callback(err);
+
+            console.log("REMOVING GROUP ", moderatorGroupName);
+            groups.destroy(moderatorGroupName, function (err) {
+                if (err) return callback(err);
+
+                callback();
+            });
+        });
+    }, function (err) {
+        if (err) return next(err);
+
+        next();
+    });
+}
+
 categoriesController.removeCategoryData = function(req, res, next) {
-    var category = req.params.name;
-    console.log("REMOVE CATEGORY: ", category);
-    res.status(200).send();
+    var categoryName = req.params.name;
+
+    console.log("REMOVING CATEGORY ", categoryName);
+    categories.getCategoryAndChildrenByName(categoryName, function (err, matchingCategories) {
+        if (err) return next(err);
+
+        console.log("MATCHING CATEGORIES ", matchingCategories);
+        removeCategories(matchingCategories, function (err) {
+            if (err) return next(err);
+
+            console.log("REMOVING GROUPS");
+            removeGroups(matchingCategories, function (err) {
+                if (err) return next(err);
+
+                next();
+            });
+        });
+    });
 };
 
 categoriesController.list = function(req, res, next) {
