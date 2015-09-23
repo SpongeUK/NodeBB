@@ -18,44 +18,6 @@ var topicsController = {},
     categories = require('../categories'),
 	utils = require('../../public/src/utils');
 
-topicsController.createPublicTopic = function (req, res, callback) {
-    var categoryName = req.params.name;
-    var childCategoryName = req.params.child;
-    var slug = req.params.slug;
-    var username = req.body.username;
-    var title = req.body.title + " - " + username;
-
-    categories.getByName(categoryName, function (err, category) {
-        if (err) return callback(err);
-        if (!category) return callback(new Error("Category not found"));
-
-        categories.getByNameAndParentCid(childCategoryName, category.cid, function (err, childCategory) {
-            if (err) return callback(err);
-            if (!childCategory) return callback(new Error("Category not found"));
-
-            user.getUidByUsername(username, function (err, uid) {
-                if (err) return callback(err);
-                if (!uid) return callback("User not found");
-
-                console.log("CREATING WITH TAG ", slug);
-                topics.post({
-                    uid: uid,
-                    title: title,
-                    slug: slug,
-                    content: "This topic has been created for " + title,
-                    cid: childCategory.cid,
-                    thumb: "",
-                    tags: [ slug ]
-                }, function (err) {
-                    if (err) return callback(err);
-
-                    callback();
-                });
-            });
-        });
-    });
-};
-
 function postTopic(params, callback) {
     user.getUidByUsername(params.username, function (err, uid) {
         if (err) return callback(err);
