@@ -105,7 +105,6 @@ function createChildCategoryAndPostTopic(params, callback) {
                 configurePrivateCategoryPrivileges(category, uid, function (err) {
                     if (err) return callback(err);
 
-                    console.log("CREATING WITH TAG ", params.slug);
                     topics.post({
                         uid: uid,
                         title: params.title,
