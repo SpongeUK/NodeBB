@@ -185,11 +185,11 @@ categoriesController.revokeModeratorPrivs = function (req, res, next) {
     });
 };
 
-function removeCategories(categories, next) {
-    if (!categories || !categories.length)
+function removeCategories(categoriesToRemove, next) {
+    if (!categoriesToRemove || !categoriesToRemove.length)
         return next();
 
-    async.each(categories, function (item, callback) {
+    async.each(categoriesToRemove, function (item, callback) {
         console.log("REMOVING CATEGORY ", item.name);
         categories.purge(item.cid, function (err) {
             if (err) return callback(err);
@@ -204,11 +204,11 @@ function removeCategories(categories, next) {
     });
 }
 
-function removeGroups(categories, next) {
-    if (!categories || !categories.length)
+function removeGroups(categoriesToRemove, next) {
+    if (!categoriesToRemove || !categoriesToRemove.length)
         return next();
 
-    async.each(categories, function (item, callback) {
+    async.each(categoriesToRemove, function (item, callback) {
         var moderatorGroupName = item.name + "-moderators";
 
         console.log("REMOVING GROUP ", item.name);
