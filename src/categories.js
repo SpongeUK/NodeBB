@@ -72,7 +72,7 @@ var async = require('async'),
             var matchingCategories = [ parent ];
 
             _.each(existingCategories, function (c) {
-                if (c.parentCid = parent.cid)
+                if (c.parentCid === parent.cid)
                     matchingCategories.push(c);
             });
 
