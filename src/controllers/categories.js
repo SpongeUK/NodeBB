@@ -126,7 +126,7 @@ categoriesController.createChild = function(req, res, next) {
             if (exists)
                 return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
 
-            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid }, function(err) {
+            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid, tags: req.body.tags }, function(err) {
                 if (err) return next(err);
 
                 categories.getByNameAndParentCid(categoryName, parentCategory.cid, function (err, category) {

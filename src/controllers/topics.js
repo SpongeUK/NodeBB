@@ -31,7 +31,7 @@ function postTopic(params, callback) {
             content: "This topic has been created for " + params.title,
             cid: params.cid,
             thumb: "",
-            tags: [ params.slug ]
+            tags: params.tags
         }, function (err) {
             if (err) return callback(err);
 
@@ -112,7 +112,7 @@ function createChildCategoryAndPostTopic(params, callback) {
                         content: "This topic has been created for " + params.title,
                         cid: category.cid,
                         thumb: "",
-                        tags: [ params.slug ]
+                        tags: params.tags
                     }, function (err) {
                         if (err) return callback(err);
 
@@ -130,6 +130,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
     var slug = req.params.slug;
     var username = req.body.username;
     var title = req.body.title;
+    var tags = req.body.tags || [];
 
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
@@ -145,7 +146,8 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                     slug: slug,
                     categoryName: childCategoryName,
                     parentCategory: category,
-                    description: req.body.description
+                    description: req.body.description,
+                    tags: tags
                 }, function (err) {
                     if (err) return callback(err);
 
@@ -156,7 +158,8 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                     username: username,
                     title: title,
                     slug: slug,
-                    cid: childCategory.cid
+                    cid: childCategory.cid,
+                    tags: tags
                 }, function (err) {
                     if (err) return callback(err);
 
