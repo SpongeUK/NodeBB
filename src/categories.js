@@ -34,6 +34,14 @@ var async = require('async'),
         });
     };
 
+    Categories.existsByNameAndParentCid = function (name, parentCid, callback) {
+        Categories.getAllCategories(null, function (err, existingCategories) {
+            if (err) return next(err);
+
+            callback(null, _.some(existingCategories, { "name": name, "parentCid": parentCid }));
+        });
+    };
+
     Categories.getByName = function (name, callback) {
         Categories.getAllCategories(null, function (err, existingCategories) {
             if (err) return next(err);

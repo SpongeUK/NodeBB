@@ -121,7 +121,7 @@ categoriesController.createChild = function(req, res, next) {
         if (!parentCategory)
             return res.status(400).send({ "msg": "Parent category " + parentCategoryName + " does not exist" });
 
-        categories.existsByName(categoryName, function (err, exists) {
+        categories.existsByNameAndParentCid(categoryName, parentCategory.cid, function (err, exists) {
             if (err) return next(err);
             if (exists)
                 return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
@@ -129,7 +129,7 @@ categoriesController.createChild = function(req, res, next) {
             categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid }, function(err) {
                 if (err) return next(err);
 
-                categories.getByName(categoryName, function (err, category) {
+                categories.getByNameAndParentCid(categoryName, parentCategory.cid, function (err, category) {
                     if (err) return next (err);
 
                     configurePrivileges(category, parentCategoryName, function (err) {
@@ -190,11 +190,9 @@ function removeCategories(categoriesToRemove, next) {
         return next();
 
     async.each(categoriesToRemove, function (item, callback) {
-        console.log("REMOVING CATEGORY ", item.name);
         categories.purge(item.cid, function (err) {
             if (err) return callback(err);
 
-            console.log("REMOVED CATEGORY ", item.name);
             callback();
         });
     }, function (err) {
@@ -211,11 +209,9 @@ function removeGroups(categoriesToRemove, next) {
     async.each(categoriesToRemove, function (item, callback) {
         var moderatorGroupName = item.name + "-moderators";
 
-        console.log("REMOVING GROUP ", item.name);
         groups.destroy(item.name, function (err) {
             if (err) return callback(err);
 
-            console.log("REMOVING GROUP ", moderatorGroupName);
             groups.destroy(moderatorGroupName, function (err) {
                 if (err) return callback(err);
 
@@ -232,15 +228,12 @@ function removeGroups(categoriesToRemove, next) {
 categoriesController.removeCategoryData = function(req, res, next) {
     var categoryName = req.params.name;
 
-    console.log("REMOVING CATEGORY ", categoryName);
     categories.getCategoryAndChildrenByName(categoryName, function (err, matchingCategories) {
         if (err) return next(err);
 
-        console.log("MATCHING CATEGORIES ", matchingCategories);
         removeCategories(matchingCategories, function (err) {
             if (err) return next(err);
 
-            console.log("REMOVING GROUPS");
             removeGroups(matchingCategories, function (err) {
                 if (err) return next(err);
 
