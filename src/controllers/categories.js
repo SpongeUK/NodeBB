@@ -68,7 +68,7 @@ function configurePrivileges(category, parentCategory, callback) {
     });
 }
 
-function createDiscussionTopic(category, callback) {
+function createDiscussionTopic(category, tags, callback) {
     topics.post({
         uid: 1,
         title: "General discussion for " + category.name,
@@ -76,7 +76,7 @@ function createDiscussionTopic(category, callback) {
         content: "This topic has been created for general discussion within the " + category.name + " group.",
         cid: category.cid,
         thumb: "",
-        tags: []
+        tags: tags
     }, function (err) {
         if (err) return callback(err);
 
@@ -86,6 +86,7 @@ function createDiscussionTopic(category, callback) {
 
 categoriesController.create = function(req, res, next) {
     var categoryName = req.params.name;
+    var tags = req.body.tags || [];
 
     categories.existsByName(categoryName, function (err, exists) {
         if (err) return next(err);
@@ -101,7 +102,7 @@ categoriesController.create = function(req, res, next) {
                 configurePrivileges(category, function (err) {
                     if (err) return next(err);
 
-                    createDiscussionTopic(category, function (err) {
+                    createDiscussionTopic(category, tags, function (err) {
                         if (err) return next(err);
 
                         res.status(201).send();
@@ -115,6 +116,7 @@ categoriesController.create = function(req, res, next) {
 categoriesController.createChild = function(req, res, next) {
     var parentCategoryName = req.params.name;
     var categoryName = req.params.child;
+    var tags = req.body.tags || [];
 
     categories.getByName(parentCategoryName, function (err, parentCategory) {
         if (err) return next(err);
@@ -135,7 +137,7 @@ categoriesController.createChild = function(req, res, next) {
                     configurePrivileges(category, parentCategoryName, function (err) {
                         if (err) return next(err);
 
-                        createDiscussionTopic(category, function (err) {
+                        createDiscussionTopic(category, tags, function (err) {
                             if (err) return next(err);
 
                             res.status(201).send();

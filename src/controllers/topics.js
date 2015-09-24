@@ -23,7 +23,6 @@ function postTopic(params, callback) {
         if (err) return callback(err);
         if (!uid) return callback("User not found");
 
-        console.log("CREATING WITH TAG ", params.slug);
         topics.post({
             uid: uid,
             title: params.title,
