@@ -112,7 +112,8 @@ function createChildCategoryAndPostTopic(params, callback) {
                         content: "This topic has been created for " + params.title,
                         cid: category.cid,
                         thumb: "",
-                        tags: params.tags
+                        tags: params.tags,
+                        suppressHook: true
                     }, function (err) {
                         if (err) return callback(err);
 
