@@ -128,10 +128,10 @@ module.exports = function(Topics) {
 			},
 			function(filteredData, next) {
 				data = filteredData;
-				Topics.create({uid: data.uid, slug: data.slug, title: data.title, cid: data.cid, thumb: data.thumb, tags: data.tags, timestamp: data.timestamp}, next);
+				Topics.create({ uid: data.uid, slug: data.slug, title: data.title, cid: data.cid, thumb: data.thumb, tags: data.tags, timestamp: data.timestamp }, next);
 			},
 			function(tid, next) {
-				Topics.reply({uid: data.uid, tid: tid, handle: data.handle, content: data.content, timestamp: data.timestamp, req: data.req}, next);
+				Topics.reply({ uid: data.uid, tid: tid, handle: data.handle, content: data.content, timestamp: data.timestamp, req: data.req, suppressHook: data.suppressHook }, next);
 			},
 			function(postData, next) {
 				async.parallel({
@@ -223,7 +223,7 @@ module.exports = function(Topics) {
 				checkContentLength(content, next);
 			},
 			function(next) {
-				posts.create({uid: uid, tid: tid, handle: data.handle, content: content, toPid: data.toPid, timestamp: data.timestamp, ip: data.req ? data.req.ip : null}, next);
+				posts.create({ uid: uid, tid: tid, handle: data.handle, content: content, toPid: data.toPid, timestamp: data.timestamp, ip: data.req ? data.req.ip : null, suppressHook: data.suppressHook }, next);
 			},
 			function(data, next) {
 				postData = data;

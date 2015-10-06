@@ -91,7 +91,10 @@ module.exports = function(Posts) {
 				});
 			},
 			function(postData, next) {
-				plugins.fireHook('action:post.save', postData);
+                if (!data.suppressHook) {
+                    plugins.fireHook('action:post.save', postData);
+                }
+
 				next(null, postData);
 			}
 		], callback);
