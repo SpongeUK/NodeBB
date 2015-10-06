@@ -67,7 +67,7 @@
 			router.post('/logout', Auth.middleware.applyCSRF, controllers.authentication.logout);
 
             router.post('/registerMany', Auth.middleware.validateRequestSource, controllers.authentication.registerMany);
-            router.post('/loginRedirect', Auth.middleware.validateRequestSource, controllers.authentication.loginToPost);
+            router.post('/loginRedirect', Auth.middleware.validateRequestSource, controllers.authentication.login);
 
 			hotswap.replace('auth', router);
 			if (typeof callback === 'function') {
