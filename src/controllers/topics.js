@@ -30,7 +30,8 @@ function postTopic(params, callback) {
             content: "This topic has been created for " + params.title,
             cid: params.cid,
             thumb: "",
-            tags: params.tags
+            tags: params.tags,
+            suppressHook: true
         }, function (err) {
             if (err) return callback(err);
 

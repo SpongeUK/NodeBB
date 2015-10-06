@@ -164,7 +164,8 @@ module.exports = function(Topics) {
 				data.topicData.unreplied = 1;
 				data.topicData.mainPost = data.postData;
 
-				plugins.fireHook('action:topic.post', data.topicData);
+                if (!data.suppressHook)
+				    plugins.fireHook('action:topic.post', data.topicData);
 
 				if (parseInt(uid, 10)) {
 					user.notifications.sendTopicNotificationToFollowers(uid, data.topicData, data.postData);

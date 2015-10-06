@@ -76,7 +76,8 @@ function createDiscussionTopic(category, tags, callback) {
         content: "This topic has been created for general discussion within the " + category.name + " group.",
         cid: category.cid,
         thumb: "",
-        tags: tags
+        tags: tags,
+        suppressHook: true
     }, function (err) {
         if (err) return callback(err);
 
