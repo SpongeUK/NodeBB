@@ -14,7 +14,7 @@
     "registrationType": "normal",
     "allowLocalLogin": 1,
     "allowAccountDelete": 1,
-    "allowFileUploads": 0,
+    "allowFileUploads": 1,
     "maximumFileSize": 2048,
     "minimumTitleLength": 3,
     "maximumTitleLength": 255,
