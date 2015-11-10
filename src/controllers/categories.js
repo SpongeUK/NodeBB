@@ -94,20 +94,16 @@ categoriesController.create = function(req, res, next) {
         if (exists)
             return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
 
-        categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments" }, function(err) {
+        categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments" }, function(err, category) {
             if (err) return next(err);
 
-            categories.getByName(categoryName, function (err, category) {
-                if (err) return next (err);
+            configurePrivileges(category, function (err) {
+                if (err) return next(err);
 
-                configurePrivileges(category, function (err) {
+                createDiscussionTopic(category, tags, function (err) {
                     if (err) return next(err);
 
-                    createDiscussionTopic(category, tags, function (err) {
-                        if (err) return next(err);
-
-                        res.status(201).send();
-                    });
+                    res.status(201).send();
                 });
             });
         });
@@ -129,20 +125,16 @@ categoriesController.createChild = function(req, res, next) {
             if (exists)
                 return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
 
-            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid, tags: req.body.tags }, function(err) {
+            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid, tags: req.body.tags }, function(err, category) {
                 if (err) return next(err);
 
-                categories.getByNameAndParentCid(categoryName, parentCategory.cid, function (err, category) {
-                    if (err) return next (err);
+                configurePrivileges(category, parentCategoryName, function (err) {
+                    if (err) return next(err);
 
-                    configurePrivileges(category, parentCategoryName, function (err) {
+                    createDiscussionTopic(category, tags, function (err) {
                         if (err) return next(err);
 
-                        createDiscussionTopic(category, tags, function (err) {
-                            if (err) return next(err);
-
-                            res.status(201).send();
-                        });
+                        res.status(201).send();
                     });
                 });
             });

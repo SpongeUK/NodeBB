@@ -93,38 +93,30 @@ function createChildCategoryAndPostTopic(params, callback) {
         description: params.description,
         icon: "fa-comments",
         parentCid: parentCid
-    }, function(err) {
+    }, function(err, category) {
         if (err) return callback(err);
+        if (!category) return callback(new Error("Failed to create category"));
 
-        categories.getByName(params.categoryName, function (err, category) {
-            if (err) return callback (err);
-            if (!category) return callback(new Error("Failed to create category"));
+        user.getUidByUsername(params.username, function (err, uid) {
+            if (err) return callback(err);
+            if (!uid) return callback("User not found");
 
-            user.getUidByUsername(params.username, function (err, uid) {
+            configurePrivateCategoryPrivileges(category, uid, params.parentCategory.name, function (err) {
                 if (err) return callback(err);
-                if (!uid) return callback("User not found");
 
-                categories.getByCid(parentCid, function (err, parentCategory) {
+                topics.post({
+                    uid: uid,
+                    title: params.title,
+                    slug: params.slug,
+                    content: "This topic has been created for " + params.title,
+                    cid: category.cid,
+                    thumb: "",
+                    tags: params.tags,
+                    suppressHook: true
+                }, function (err) {
                     if (err) return callback(err);
 
-                    configurePrivateCategoryPrivileges(category, uid, parentCategory.name, function (err) {
-                        if (err) return callback(err);
-
-                        topics.post({
-                            uid: uid,
-                            title: params.title,
-                            slug: params.slug,
-                            content: "This topic has been created for " + params.title,
-                            cid: category.cid,
-                            thumb: "",
-                            tags: params.tags,
-                            suppressHook: true
-                        }, function (err) {
-                            if (err) return callback(err);
-
-                            callback();
-                        });
-                    });
+                    callback();
                 });
             });
         });
