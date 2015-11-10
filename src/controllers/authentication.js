@@ -129,8 +129,6 @@ authenticationController.registerMany = function (req, res, done) {
 
             addUserToGroup(user, group, callback);
         });
-
-        registerUser(user, callback);
     }, function (err) {
         if (err) return res.status(500).send(err);
 
