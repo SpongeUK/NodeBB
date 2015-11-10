@@ -50,6 +50,14 @@ var async = require('async'),
         });
     };
 
+    Categories.getByCid = function(cid, callback) {
+        Categories.getAllCategories(null, function (err, existingCategories) {
+            if (err) return next(err);
+
+            callback(null, _.find(existingCategories, { "cid": cid }));
+        });
+    };
+
     Categories.getByNameAndParentCid = function (name, parentCid, callback) {
         Categories.getAllCategories(null, function (err, existingCategories) {
             if (err) return next(err);

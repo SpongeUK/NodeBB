@@ -58,7 +58,7 @@ function configurePrivileges(category, parentCategory, callback) {
             addUserPrivs(category.cid, member, function (err) {
                 if (err) return callback(err);
 
-                addModeratorPrivs(category.cid, category.name, function (err) {
+                addModeratorPrivs(category.cid, member, function (err) {
                     if (err) return callback(err);
 
                     callback();

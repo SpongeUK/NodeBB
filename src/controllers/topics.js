@@ -65,7 +65,7 @@ function addModeratorPrivs(categoryId, groupName, callback) {
     }, callback);
 }
 
-function configurePrivateCategoryPrivileges(category, userId, callback) {
+function configurePrivateCategoryPrivileges(category, userId, parentCategory, callback) {
     removeAllPrivs(category.cid, 'registered-users', function (err) {
         if (err) return callback(err);
 
@@ -75,7 +75,7 @@ function configurePrivateCategoryPrivileges(category, userId, callback) {
             addUserPrivs(category.cid, userId, function (err) {
                 if (err) return callback(err);
 
-                addModeratorPrivs(category.cid, category.name, function (err) {
+                addModeratorPrivs(category.cid, parentCategory, function (err) {
                     if (err) return callback(err);
 
                     callback();
@@ -86,11 +86,13 @@ function configurePrivateCategoryPrivileges(category, userId, callback) {
 }
 
 function createChildCategoryAndPostTopic(params, callback) {
+    var parentCid = params.parentCategory.cid;
+
     categories.create({
         name: params.categoryName,
         description: params.description,
         icon: "fa-comments",
-        parentCid: params.parentCategory.cid
+        parentCid: parentCid
     }, function(err) {
         if (err) return callback(err);
 
@@ -102,22 +104,26 @@ function createChildCategoryAndPostTopic(params, callback) {
                 if (err) return callback(err);
                 if (!uid) return callback("User not found");
 
-                configurePrivateCategoryPrivileges(category, uid, function (err) {
+                categories.getByCid(parentCid, function (err, parentCategory) {
                     if (err) return callback(err);
 
-                    topics.post({
-                        uid: uid,
-                        title: params.title,
-                        slug: params.slug,
-                        content: "This topic has been created for " + params.title,
-                        cid: category.cid,
-                        thumb: "",
-                        tags: params.tags,
-                        suppressHook: true
-                    }, function (err) {
+                    configurePrivateCategoryPrivileges(category, uid, parentCategory.name, function (err) {
                         if (err) return callback(err);
 
-                        callback();
+                        topics.post({
+                            uid: uid,
+                            title: params.title,
+                            slug: params.slug,
+                            content: "This topic has been created for " + params.title,
+                            cid: category.cid,
+                            thumb: "",
+                            tags: params.tags,
+                            suppressHook: true
+                        }, function (err) {
+                            if (err) return callback(err);
+
+                            callback();
+                        });
                     });
                 });
             });
