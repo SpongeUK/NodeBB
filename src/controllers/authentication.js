@@ -14,6 +14,7 @@ var async = require('async'),
     utils = require('../../public/src/utils'),
     Password = require('../password'),
     topics = require('../topics'),
+    groups = require('../groups'),
 
     authenticationController = {};
 
@@ -102,13 +103,33 @@ function registerUser(userData, done) {
     ]);
 }
 
+function addUserToGroup(userData, groupName, next) {
+    user.getUidByUsername(userData.username, function (err, userId) {
+        if (err) return next(err);
+        if (!userId) return next();
+
+        groups.join(groupName, userId, function (err) {
+            if (err) return next(err);
+
+            next();
+        });
+    });
+}
+
 authenticationController.registerMany = function (req, res, done) {
-    var newUsers = req.body;
+    var newUsers = req.body.users;
+    var group = req.body.group;
     if (!newUsers || !newUsers.length)
         return res.status(400).send("No registrations provided");
 
     async.each(newUsers, function (user, callback) {
-        console.log("REGISTERING USER: ", user);
+        registerUser(user, function (err) {
+            if (err) return callback(err);
+            if (!group) return callback();
+
+            addUserToGroup(user, group, callback);
+        });
+
         registerUser(user, callback);
     }, function (err) {
         if (err) return res.status(500).send(err);
@@ -116,8 +137,6 @@ authenticationController.registerMany = function (req, res, done) {
         res.status(201).send();
     });
 };
-
-authenticationController.registerManyWithGroups = function (req, res, done) {};
 
 function registerAndLoginUser(req, res, userData, callback) {
     var uid;

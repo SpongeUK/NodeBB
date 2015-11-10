@@ -37,37 +37,6 @@ groupsController.create = function(req, res, next) {
     });
 };
 
-function addUserToGroup(userData, groupName, next) {
-    user.getUidByUsername(userData.username, function (err, userId) {
-        if (err) return next(err);
-        if (!userId) return next();
-
-        groups.join(groupName, userId, function (err) {
-            if (err) return next(err);
-
-            next();
-        });
-    });
-}
-
-groupsController.addUser = function(req, res, next) {
-    var users = req.body.users;
-    var group = req.params.name;
-
-    console.log("ADDING USERS: ", users, " TO GROUP ", group);
-
-    if (!group || !users || !users.length)
-        return res.status(400).send();
-
-    async.each(users, function (user, callback) {
-        addUserToGroup(user, group, callback);
-    }, function (err) {
-        if (err) return res.status(500).send(err);
-
-        res.status(200).send();
-    });
-};
-
 groupsController.list = function(req, res, next) {
 	var page = parseInt(req.query.page, 10) || 1;
 	var groupsPerPage = 20;
