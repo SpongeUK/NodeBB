@@ -54,16 +54,14 @@ groupsController.addUser = function(req, res, next) {
     var users = req.body.users;
     var group = req.params.name;
 
+    console.log("ADDING USERS: ", users, " TO GROUP ", group);
+
     if (!group || !users || !users.length)
         return res.status(400).send();
 
-    console.log("ADDING USERS TO GROUP");
     async.each(users, function (user, callback) {
-        console.log("ADDING USER");
         addUserToGroup(user, group, callback);
     }, function (err) {
-        console.log("DONE");
-        if (err) console.log("ERROR: ", err);
         if (err) return res.status(500).send(err);
 
         res.status(200).send();
