@@ -107,10 +107,13 @@ authenticationController.registerMany = function (req, res, done) {
     if (!newUsers || !newUsers.length)
         return res.status(400).send("No registrations provided");
 
+    console.log("REGISTERING MANY USERS");
     async.each(newUsers, function (user, callback) {
+        console.log("REGISTERING USER");
         registerUser(user, callback);
     }, function (err) {
-        if (err) res.status(500).send(err);
+        console.log("DONE REGISTERING USERS");
+        if (err) return res.status(500).send(err);
 
         res.status(201).send();
     });
