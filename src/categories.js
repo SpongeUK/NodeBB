@@ -66,6 +66,17 @@ var async = require('async'),
         });
     };
 
+    Categories.getByParent = function (parent, callback) {
+        Categories.getAllCategories(null, function (err, existingCategories) {
+            if (err) return next(err);
+
+            var parent = _.find(existingCategories, { "name": parent });
+            console.log("PARENT: ", parent);
+
+            callback(null, _.filter(existingCategories, { "parentCid": parent.cid }));
+        });
+    };
+
     Categories.getChildCategoriesByName = function (name, callback) {
         Categories.getAllCategories(null, function (err, existingCategories) {
             if (err) return next(err);

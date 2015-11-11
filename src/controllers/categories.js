@@ -15,6 +15,7 @@ var categoriesController = {},
 	plugins = require('../plugins'),
 	pagination = require('../pagination'),
 	helpers = require('./helpers'),
+    notifications = require('./notifications'),
 	utils = require('../../public/src/utils');
 
 function removeAllPrivs(categoryId, member, callback) {
@@ -145,6 +146,21 @@ categoriesController.createChild = function(req, res, next) {
     });
 };
 
+function subscribeToChildCategories(uid, categoryName, callback) {
+    categories.getByParent(categoryName, function (err, categories) {
+        if (err) return callback(err);
+        if (!categories || !categories.length) return callback();
+
+        async.eachSeries(categories, function (category, next) {
+            notifications.subscribeToCategory(uid, category.cid, next);
+        }, function (err) {
+            if (err) return callback(err);
+
+            callback();
+        });
+    })
+}
+
 categoriesController.grantModeratorPrivs = function (req, res, next) {
     var categoryName = req.params.name;
     var username = req.body.username;
@@ -152,15 +168,24 @@ categoriesController.grantModeratorPrivs = function (req, res, next) {
     user.getUidByUsername(username, function (err, uid) {
         if (err) return next(err);
 
-        groups.leave(categoryName, uid, function (err) {
+        async.parallel([
+            function (done) {
+                groups.leave(categoryName, uid, function (err) {
+                    if (err) return done(err);
+
+                    groups.join(categoryName + "-moderators", uid, done);
+                });
+            },
+            function (done) {
+                subscribeToChildCategories(categoryName, uid, done)
+            }
+        ], function (err) {
             if (err) return next(err);
 
-            groups.join(categoryName + "-moderators", uid, function (err) {
-                if (err) return next(err);
-
-                next();
-            });
+            next();
         });
+
+
     });
 };
 
