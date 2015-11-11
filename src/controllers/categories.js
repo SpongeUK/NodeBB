@@ -85,10 +85,6 @@ function createDiscussionTopic(category, tags, callback) {
     });
 }
 
-function configureCategoryNotificationSubscription(category, parentName, callback) {
-    callback();
-}
-
 categoriesController.create = function(req, res, next) {
     var categoryName = req.params.name;
     var tags = req.body.tags || [];
@@ -138,9 +134,6 @@ categoriesController.createChild = function(req, res, next) {
                     },
                     function (done) {
                         createDiscussionTopic(category, tags, done);
-                    },
-                    function (done) {
-                        configureCategoryNotificationSubscription(category, parentCategoryName, done)
                     }
                 ], function (err) {
                     if (err) return next(err);

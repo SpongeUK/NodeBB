@@ -101,23 +101,29 @@ function createChildCategoryAndPostTopic(params, callback) {
             if (err) return callback(err);
             if (!uid) return callback("User not found");
 
-            configurePrivateCategoryPrivileges(category, uid, params.parentCategory.name, function (err) {
+            async.parallel([
+                function (done) {
+                    configurePrivateCategoryPrivileges(category, uid, params.parentCategory.name, done);
+                },
+                /* function (done) {
+                    ConfigureCategoryNotificationSubscription();
+                }, */
+                function (done) {
+                    topics.post({
+                        uid: uid,
+                        title: params.title,
+                        slug: params.slug,
+                        content: "This topic has been created for " + params.title,
+                        cid: category.cid,
+                        thumb: "",
+                        tags: params.tags,
+                        suppressHook: true
+                    }, done);
+                }
+            ], function (err) {
                 if (err) return callback(err);
 
-                topics.post({
-                    uid: uid,
-                    title: params.title,
-                    slug: params.slug,
-                    content: "This topic has been created for " + params.title,
-                    cid: category.cid,
-                    thumb: "",
-                    tags: params.tags,
-                    suppressHook: true
-                }, function (err) {
-                    if (err) return callback(err);
-
-                    callback();
-                });
+                callback();
             });
         });
     });
