@@ -149,10 +149,10 @@ module.exports = function(User) {
 		User.getUidByEmail(email.toLowerCase(), function(err, exists) {
 			if (exists) return callback();
 
-			User.create(userData, function (err) {
+			User.create(userData, function (err, user) {
                 if (err) return callback(err);
 
-                callback();
+                callback(null, user);
             });
 		});
 	};

@@ -100,8 +100,17 @@ function registerUser(userData, done) {
             next();
         },
         function (next) {
-            user.createIfNotExists(userData, done);
-        }
+            user.createIfNotExists(userData, function (err, uid) {
+                if (err) return done(err);
+
+                user.getUserData(uid, function (err, user) {
+                    if (err) return done(err);
+
+                    done(null, user);
+                });
+            });
+        },
+        done
     ]);
 }
 
@@ -138,7 +147,7 @@ authenticationController.registerMany = function (req, res, done) {
         return res.status(400).send("No registrations provided");
 
     async.each(newUsers, function (user, callback) {
-        registerUser(user, function (err) {
+        registerUser(user, function (err, newUser) {
             if (err) return callback(err);
             if (!group) return callback();
 
@@ -147,7 +156,7 @@ authenticationController.registerMany = function (req, res, done) {
                     addUserToGroup(user, group, next);
                 },
                 function (next) {
-                    subscribeUserToCategory(user, group, next);
+                    subscribeUserToCategory(newUser, group, next);
                 }
             ], callback);
         });
