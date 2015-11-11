@@ -14,8 +14,8 @@ var categoriesController = {},
 	meta = require('../meta'),
 	plugins = require('../plugins'),
 	pagination = require('../pagination'),
+    notifications = require('../notifications'),
 	helpers = require('./helpers'),
-    notifications = require('./notifications'),
 	utils = require('../../public/src/utils');
 
 function removeAllPrivs(categoryId, member, callback) {
