@@ -70,7 +70,7 @@ var async = require('async'),
         Categories.getAllCategories(null, function (err, existingCategories) {
             if (err) return next(err);
 
-            var parentCategory = _.find(existingCategories, { "name": parent, "parentCid": 0 });
+            var parentCategory = _.find(existingCategories, { "name": parent, "parentCid": '0' });
             callback(null, _.filter(existingCategories, { "parentCid": parentCategory.cid }));
         });
     };
