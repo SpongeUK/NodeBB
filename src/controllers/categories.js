@@ -177,7 +177,7 @@ categoriesController.grantModeratorPrivs = function (req, res, next) {
                 });
             },
             function (done) {
-                subscribeToChildCategories(categoryName, uid, done)
+                subscribeToChildCategories(categoryName, uid, done);
             }
         ], function (err) {
             if (err) return next(err);
@@ -189,6 +189,23 @@ categoriesController.grantModeratorPrivs = function (req, res, next) {
     });
 };
 
+function unsubscribeFromChildCategories(categoryName, uid, callback) {
+    categories.getByParent(categoryName, function (err, categories) {
+        if (err) return callback(err);
+        if (!categories || !categories.length) return callback();
+
+        async.eachSeries(categories, function (category, next) {
+            if (category.uid === uid) return next();
+
+            notifications.unsubscribeFromCategory(uid, category.cid, next);
+        }, function (err) {
+            if (err) return callback(err);
+
+            callback();
+        });
+    })
+}
+
 categoriesController.revokeModeratorPrivs = function (req, res, next) {
     var categoryName = req.params.name;
     var username = req.body.username;
@@ -196,14 +213,21 @@ categoriesController.revokeModeratorPrivs = function (req, res, next) {
     user.getUidByUsername(username, function (err, uid) {
         if (err) return next(err);
 
-        groups.leave(categoryName + "-moderators", uid, function (err) {
+        async.parallel([
+            function (done) {
+                groups.leave(categoryName + "-moderators", uid, function (err) {
+                    if (err) return next(err);
+
+                    groups.join(categoryName, uid, done);
+                });
+            },
+            function (done) {
+                unsubscribeFromChildCategories(categoryName, uid, done);
+            }
+        ], function (err) {
             if (err) return next(err);
 
-            groups.join(categoryName, uid, function (err) {
-                if (err) return next(err);
-
-                next();
-            });
+            next();
         });
     });
 };

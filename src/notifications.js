@@ -26,6 +26,10 @@ var async = require('async'),
         db.sortedSetAdd('cid:' + cid + ':subscribed:uids', Date.now(), uid, callback);
     };
 
+    Notifications.unsubscribeFromCategory = function(uid, cid, callback) {
+        db.sortedSetRemove('cid:' + cid + ':subscribed:uids', uid, callback);
+    };
+
 	Notifications.get = function(nid, callback) {
 		Notifications.getMultiple([nid], function(err, notifications) {
 			callback(err, Array.isArray(notifications) && notifications.length ? notifications[0] : null);
