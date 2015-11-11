@@ -87,7 +87,26 @@ function configurePrivateCategoryPrivileges(category, userId, parentCategory, ca
 }
 
 function configureCategoryNotificationSubscription(uid, category, parentCategory, callback) {
-    notifications.subscribeToCategory(uid, category.cid, function (err) {
+    async.parallel([
+        function (done) {
+            notifications.subscribeToCategory(uid, category.cid, done);
+        },
+        function (done) {
+            groups.get(parentCategory.name + "-moderators", {}, function (err, group) {
+                if (err) return done(err);
+                if (!group || !group.members || !group.members.length)
+                    return done();
+
+                async.eachSeries(group.members, function (member, next) {
+                    notifications.subscribeToCategory(member.uid, category.cid, next);
+                }, function (err) {
+                    if (err) return done(err);
+
+                    done();
+                });
+            });
+        }
+    ], function (err) {
         if (err) return callback(err);
 
         callback();
