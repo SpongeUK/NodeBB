@@ -16,6 +16,7 @@ var topicsController = {},
 	helpers = require('./helpers'),
 	pagination = require('../pagination'),
     categories = require('../categories'),
+    notifications = require('../notifications'),
 	utils = require('../../public/src/utils');
 
 function postTopic(params, callback) {
@@ -85,6 +86,14 @@ function configurePrivateCategoryPrivileges(category, userId, parentCategory, ca
     });
 }
 
+function configureCategoryNotificationSubscription(uid, category, parentCategory, callback) {
+    notifications.subscribeToCategory(uid, category.cid, function (err) {
+        if (err) return callback(err);
+
+        callback();
+    });
+}
+
 function createChildCategoryAndPostTopic(params, callback) {
     var parentCid = params.parentCategory.cid;
 
@@ -103,22 +112,23 @@ function createChildCategoryAndPostTopic(params, callback) {
 
             async.parallel([
                 function (done) {
-                    configurePrivateCategoryPrivileges(category, uid, params.parentCategory.name, done);
+                    configurePrivateCategoryPrivileges(category, uid, params.parentCategory.name, function (err) {
+                        if (err) return callback(err);
+
+                        topics.post({
+                            uid: uid,
+                            title: params.title,
+                            slug: params.slug,
+                            content: "This topic has been created for " + params.title,
+                            cid: category.cid,
+                            thumb: "",
+                            tags: params.tags,
+                            suppressHook: true
+                        }, done);
+                    });
                 },
-                /* function (done) {
-                    ConfigureCategoryNotificationSubscription();
-                }, */
                 function (done) {
-                    topics.post({
-                        uid: uid,
-                        title: params.title,
-                        slug: params.slug,
-                        content: "This topic has been created for " + params.title,
-                        cid: category.cid,
-                        thumb: "",
-                        tags: params.tags,
-                        suppressHook: true
-                    }, done);
+                    configureCategoryNotificationSubscription(uid, category, params.parentCategory, done);
                 }
             ], function (err) {
                 if (err) return callback(err);
