@@ -70,10 +70,8 @@ var async = require('async'),
         Categories.getAllCategories(null, function (err, existingCategories) {
             if (err) return next(err);
 
-            var parent = _.find(existingCategories, { "name": parent });
-            console.log("PARENT: ", parent);
-
-            callback(null, _.filter(existingCategories, { "parentCid": parent.cid }));
+            var parentCategory = _.find(existingCategories, { "name": parent, "parentCid": 0 });
+            callback(null, _.filter(existingCategories, { "parentCid": parentCategory.cid }));
         });
     };
 

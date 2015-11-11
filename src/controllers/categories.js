@@ -146,7 +146,7 @@ categoriesController.createChild = function(req, res, next) {
     });
 };
 
-function subscribeToChildCategories(uid, categoryName, callback) {
+function subscribeToChildCategories(categoryName, uid, callback) {
     categories.getByParent(categoryName, function (err, categories) {
         if (err) return callback(err);
         if (!categories || !categories.length) return callback();
