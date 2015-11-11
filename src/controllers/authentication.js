@@ -15,6 +15,8 @@ var async = require('async'),
     Password = require('../password'),
     topics = require('../topics'),
     groups = require('../groups'),
+    categories = require('../categories'),
+    notifications = require('../notifications'),
 
     authenticationController = {};
 
@@ -116,6 +118,19 @@ function addUserToGroup(userData, groupName, next) {
     });
 }
 
+function subscribeUserToCategory(user, groupName, next) {
+    categories.getByName(groupName, function (err, category) {
+        if (err) return next(err);
+        if (!category) return next();
+
+        notifications.subscribeToCategory(user.uid, category.cid, function (err) {
+            if (err) return next(err);
+
+            next();
+        });
+    });
+}
+
 authenticationController.registerMany = function (req, res, done) {
     var newUsers = req.body.users;
     var group = req.body.group;
@@ -127,7 +142,14 @@ authenticationController.registerMany = function (req, res, done) {
             if (err) return callback(err);
             if (!group) return callback();
 
-            addUserToGroup(user, group, callback);
+            async.parallel([
+                function (next) {
+                    addUserToGroup(user, group, next);
+                },
+                function (next) {
+                    subscribeUserToCategory(user, group, next);
+                }
+            ], callback);
         });
     }, function (err) {
         if (err) return res.status(500).send(err);

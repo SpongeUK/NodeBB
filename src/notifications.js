@@ -22,6 +22,10 @@ var async = require('async'),
 		new cron('*/30 * * * *', Notifications.prune, null, true);
 	};
 
+    Notifications.subscribeToCategory = function(uid, cid, callback) {
+        db.sortedSetAdd('cid:' + cid + ':subscribed:uids', Date.now(), uid, callback);
+    };
+
 	Notifications.get = function(nid, callback) {
 		Notifications.getMultiple([nid], function(err, notifications) {
 			callback(err, Array.isArray(notifications) && notifications.length ? notifications[0] : null);
