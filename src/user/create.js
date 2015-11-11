@@ -146,8 +146,8 @@ module.exports = function(User) {
 	User.createIfNotExists = function (userData, callback) {
 		var email = userData.email;
 
-		User.getUidByEmail(email.toLowerCase(), function(err, exists) {
-			if (exists) return callback();
+		User.getUidByEmail(email.toLowerCase(), function(err, uid) {
+			if (uid) return callback(null, uid);
 
 			User.create(userData, function (err, user) {
                 if (err) return callback(err);
