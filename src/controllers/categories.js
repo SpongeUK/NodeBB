@@ -85,6 +85,10 @@ function createDiscussionTopic(category, tags, callback) {
     });
 }
 
+function configureCategoryNotificationSubscription(category, parentName, callback) {
+    callback();
+}
+
 categoriesController.create = function(req, res, next) {
     var categoryName = req.params.name;
     var tags = req.body.tags || [];
@@ -128,14 +132,20 @@ categoriesController.createChild = function(req, res, next) {
             categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid, tags: req.body.tags }, function(err, category) {
                 if (err) return next(err);
 
-                configurePrivileges(category, parentCategoryName, function (err) {
+                async.parallel([
+                    function (done) {
+                        configurePrivileges(category, parentCategoryName, done);
+                    },
+                    function (done) {
+                        createDiscussionTopic(category, tags, done);
+                    },
+                    function (done) {
+                        configureCategoryNotificationSubscription(category, parentCategoryName, done)
+                    }
+                ], function (err) {
                     if (err) return next(err);
 
-                    createDiscussionTopic(category, tags, function (err) {
-                        if (err) return next(err);
-
-                        res.status(201).send();
-                    });
+                    res.status(201).send();
                 });
             });
         });
