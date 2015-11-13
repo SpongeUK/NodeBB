@@ -32,7 +32,8 @@ function postTopic(params, callback) {
             cid: params.cid,
             thumb: "",
             tags: params.tags,
-            suppressHook: true
+            suppressHook: true,
+            preventFollowTopicsOnCreate: true
         }, function (err) {
             if (err) return callback(err);
 

@@ -143,7 +143,7 @@ module.exports = function(Topics) {
 							if (err) {
 								return next(err);
 							}
-							if (settings.followTopicsOnCreate) {
+							if (settings.followTopicsOnCreate && !data.preventFollowTopicsOnCreate) {
 								Topics.follow(postData.tid, uid, next);
 							} else {
 								next();
