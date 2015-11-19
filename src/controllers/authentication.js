@@ -286,6 +286,8 @@ function continueLogin(req, res, next) {
                     plugins.fireHook('action:user.loggedIn', userData.uid);
                 }
 
+                if (req.body.path)
+                    return redirect(req, res, req.body.path);
 
                 var path = "/";
                 var trainingTag = "training-" + req.body.trainingId;
