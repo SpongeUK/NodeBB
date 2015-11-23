@@ -95,7 +95,12 @@ categoriesController.create = function(req, res, next) {
         if (exists)
             return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
 
-        categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments" }, function(err, category) {
+        categories.create({
+            name: categoryName,
+            description: req.body.description,
+            icon: "fa-comments",
+            color: "#b9b8b8"
+        }, function(err, category) {
             if (err) return next(err);
 
             configurePrivileges(category, function (err) {
@@ -126,7 +131,14 @@ categoriesController.createChild = function(req, res, next) {
             if (exists)
                 return res.status(400).send({ "msg": "Category " + categoryName + " already exists" });
 
-            categories.create({ name: categoryName, description: req.body.description, icon: "fa-comments", parentCid: parentCategory.cid, tags: req.body.tags }, function(err, category) {
+            categories.create({
+                name: categoryName,
+                description: req.body.description,
+                icon: "fa-comments",
+                color: "#b9b8b8",
+                parentCid: parentCategory.cid,
+                tags: req.body.tags
+            }, function(err, category) {
                 if (err) return next(err);
 
                 async.parallel([

@@ -121,6 +121,7 @@ function createChildCategoryAndPostTopic(params, callback) {
         name: params.categoryName,
         description: params.description,
         icon: "fa-comments",
+        color: "#b9b8b8",
         parentCid: parentCid
     }, function(err, category) {
         if (err) return callback(err);
