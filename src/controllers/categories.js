@@ -99,7 +99,8 @@ categoriesController.create = function(req, res, next) {
             name: categoryName,
             description: req.body.description,
             icon: "fa-comments",
-            color: "#b9b8b8"
+            color: "#fff",
+            bgColor: "#b9b8b8",
         }, function(err, category) {
             if (err) return next(err);
 
@@ -135,7 +136,8 @@ categoriesController.createChild = function(req, res, next) {
                 name: categoryName,
                 description: req.body.description,
                 icon: "fa-comments",
-                color: "#b9b8b8",
+                color: "#fff",
+                bgColor: "#b9b8b8",
                 parentCid: parentCategory.cid,
                 tags: req.body.tags
             }, function(err, category) {
