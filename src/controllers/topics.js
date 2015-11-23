@@ -143,7 +143,8 @@ function createChildCategoryAndPostTopic(params, callback) {
                             cid: category.cid,
                             thumb: "",
                             tags: params.tags,
-                            suppressHook: true
+                            suppressHook: true,
+                            preventFollowTopicsOnCreate: true
                         }, done);
                     });
                 },
