@@ -286,7 +286,7 @@ function continueLogin(req, res, next) {
                     plugins.fireHook('action:user.loggedIn', userData.uid);
                 }
 
-                if (req.body.target)
+                if (req.body.target && req.body.target !== "null" && req.body.target !== "undefined")
                     return redirect(req, res, req.body.target);
 
                 var path = "/";
