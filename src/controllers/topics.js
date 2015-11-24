@@ -172,7 +172,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
 
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
-        if (!category) return callback(new Error("Category not found"));
+        if (!category) return res.status(404).send();
 
         categories.getByNameAndParentCid(childCategoryName, category.cid, function (err, childCategory) {
             if (err) return callback(err);
