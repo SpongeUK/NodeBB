@@ -276,7 +276,7 @@ module.exports = function(Topics) {
 					user.setUserField(uid, 'lastonline', Date.now());
 				}
 
-				if (postData.index > 0) {
+				if (postData.index > 0 && !data.suppressHook) {
 					plugins.fireHook('action:topic.reply', postData);
 				}
 
