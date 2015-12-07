@@ -171,7 +171,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
     var username = req.body.username;
     var title = req.body.title;
     var tags = req.body.tags || [];
-    var instruction = req.body.instruction;
+    var instructions = req.body.instructions;
 
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
@@ -189,7 +189,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                     parentCategory: category,
                     description: req.body.description,
                     tags: tags,
-                    instruction: instruction
+                    instructions: instructions
                 }, function (err) {
                     if (err) return callback(err);
 
@@ -202,7 +202,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                     slug: slug,
                     cid: childCategory.cid,
                     tags: tags,
-                    instruction: instruction
+                    instructions: instructions
                 }, function (err) {
                     if (err) return callback(err);
 
