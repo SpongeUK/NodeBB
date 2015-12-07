@@ -24,11 +24,12 @@ function postTopic(params, callback) {
         if (err) return callback(err);
         if (!uid) return callback("User not found");
 
+        var content = (!params.instruction) ? "This topic has been created for " + params.title : params.instruction;
         topics.post({
             uid: uid,
             title: params.title,
             slug: params.slug,
-            content: "This topic has been created for " + params.title,
+            content: content,
             cid: params.cid,
             thumb: "",
             tags: params.tags,
@@ -137,11 +138,12 @@ function createChildCategoryAndPostTopic(params, callback) {
                     configurePrivateCategoryPrivileges(category, uid, params.parentCategory.name, function (err) {
                         if (err) return callback(err);
 
+                        var content = (!params.instruction) ? "This topic has been created for " + params.title : params.instruction;
                         topics.post({
                             uid: uid,
                             title: params.title,
                             slug: params.slug,
-                            content: "This topic has been created for " + params.title,
+                            content: content,
                             cid: category.cid,
                             thumb: "",
                             tags: params.tags,
@@ -169,6 +171,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
     var username = req.body.username;
     var title = req.body.title;
     var tags = req.body.tags || [];
+    var instruction = req.body.instruction;
 
     categories.getByName(categoryName, function (err, category) {
         if (err) return callback(err);
@@ -185,7 +188,8 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                     categoryName: childCategoryName,
                     parentCategory: category,
                     description: req.body.description,
-                    tags: tags
+                    tags: tags,
+                    instruction: instruction
                 }, function (err) {
                     if (err) return callback(err);
 
@@ -197,7 +201,8 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                     title: title,
                     slug: slug,
                     cid: childCategory.cid,
-                    tags: tags
+                    tags: tags,
+                    instruction: instruction
                 }, function (err) {
                     if (err) return callback(err);
 
