@@ -24,7 +24,7 @@ function postTopic(params, callback) {
         if (err) return callback(err);
         if (!uid) return callback("User not found");
 
-        var content = (!params.instruction) ? "This topic has been created for " + params.title : params.instruction;
+        var content = (!params.instructions) ? "This topic has been created for " + params.title : params.instructions;
         topics.post({
             uid: uid,
             title: params.title,
@@ -138,7 +138,7 @@ function createChildCategoryAndPostTopic(params, callback) {
                     configurePrivateCategoryPrivileges(category, uid, params.parentCategory.name, function (err) {
                         if (err) return callback(err);
 
-                        var content = (!params.instruction) ? "This topic has been created for " + params.title : params.instruction;
+                        var content = (!params.instructions) ? "This topic has been created for " + params.title : params.instructions;
                         topics.post({
                             uid: uid,
                             title: params.title,
