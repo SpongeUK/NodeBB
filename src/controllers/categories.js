@@ -72,7 +72,7 @@ function configurePrivileges(category, parentCategory, callback) {
 function createDiscussionTopic(category, tags, callback) {
     topics.post({
         uid: 1,
-        title: "General discussion for " + category.name,
+        title: "General discussion", //for " + category.name,
         slug: "general-" + category.name,
         content: "This topic has been created for general discussion within the " + category.name + " group.",
         cid: category.cid,
