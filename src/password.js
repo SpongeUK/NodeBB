@@ -23,6 +23,7 @@
 				return callback(new Error(msg.err));
 			}
 
+            console.log(new Date().toTimeString().split(" ")[0], " PASSWORD CALLING BACK");
 			callback(null, msg.result);
 		});
 
