@@ -242,9 +242,7 @@ function redirect(req, res, path) {
 }
 
 function continueLogin(req, res, next) {
-    console.log(new Date().toTimeString().split(" ")[0], " CALLING PASSPORT AUTHENTICATE");
     passport.authenticate('local', function (err, userData, info) {
-        console.log(new Date().toTimeString().split(" ")[0], " CALLING BACK");
         if (err) {
             return res.status(403).send(err.message);
         }
@@ -319,7 +317,6 @@ function continueLogin(req, res, next) {
 }
 
 authenticationController.localLogin = function (req, username, password, next) {
-    console.log(new Date().toTimeString().split(" ")[0], " LOCAL LOGIN STRATEGY");
     if (!username || !password) {
         return next(new Error('[[error:invalid-password]]'));
     }
@@ -329,7 +326,6 @@ authenticationController.localLogin = function (req, username, password, next) {
 
     async.waterfall([
         function (next) {
-            console.log(new Date().toTimeString().split(" ")[0], " GET UID BY USER SLUG");
             user.getUidByUserslug(userslug, next);
         },
         function (_uid, next) {
@@ -337,11 +333,9 @@ authenticationController.localLogin = function (req, username, password, next) {
                 return next(new Error('[[error:no-user]]'));
             }
             uid = _uid;
-            console.log(new Date().toTimeString().split(" ")[0], " LOG ATTEMPT");
             user.auth.logAttempt(uid, req.ip, next);
         },
         function (next) {
-            console.log(new Date().toTimeString().split(" ")[0], " GETTING USER DATA AND IS ADMIN");
             async.parallel({
                 userData: function (next) {
                     db.getObjectFields('user:' + uid, ['password', 'banned', 'passwordExpiry'], next);
@@ -356,7 +350,6 @@ authenticationController.localLogin = function (req, username, password, next) {
             userData.uid = uid;
             userData.isAdmin = result.isAdmin;
 
-            console.log(new Date().toTimeString().split(" ")[0], " GOT RESULTS");
             if (!result.isAdmin && parseInt(meta.config.allowLocalLogin, 10) === 0) {
                 return next(new Error('[[error:local-login-disabled]]'));
             }
@@ -367,14 +360,12 @@ authenticationController.localLogin = function (req, username, password, next) {
             if (userData.banned && parseInt(userData.banned, 10) === 1) {
                 return next(new Error('[[error:user-banned]]'));
             }
-            console.log(new Date().toTimeString().split(" ")[0], " COMPARING PASSWORDS");
             Password.compare(password, userData.password, next);
         },
         function (passwordMatch, next) {
             if (!passwordMatch) {
                 return next(new Error('[[error:invalid-password]]'));
             }
-            console.log(new Date().toTimeString().split(" ")[0], " CLEARING ATTEMPTS AND DONE");
             user.auth.clearLoginAttempts(uid);
             next(null, userData, '[[success:authentication-successful]]');
         }
