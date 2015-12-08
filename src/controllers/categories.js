@@ -100,7 +100,7 @@ categoriesController.create = function(req, res, next) {
             description: req.body.description,
             icon: "fa-comments",
             color: "#fff",
-            bgColor: "#b9b8b8",
+            bgColor: "#b9b8b8"
         }, function(err, category) {
             if (err) return next(err);
 
