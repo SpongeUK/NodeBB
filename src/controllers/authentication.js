@@ -202,7 +202,6 @@ function addToApprovalQueue(req, res, userData, callback) {
 }
 
 authenticationController.login = function (req, res, next) {
-    console.log(new Date().toTimeString().split(" ")[0], " LOGGING IN");
     // Handle returnTo data
     if (req.body.hasOwnProperty('returnTo') && !req.session.returnTo) {
         req.session.returnTo = req.body.returnTo;
@@ -215,17 +214,14 @@ authenticationController.login = function (req, res, next) {
     var loginWith = meta.config.allowLoginWith || 'username-email';
 
     if (req.body.username && utils.isEmailValid(req.body.username) && loginWith.indexOf('email') !== -1) {
-        console.log(new Date().toTimeString().split(" ")[0], " GETTING USERNAME BY EMAIL");
         user.getUsernameByEmail(req.body.username, function (err, username) {
             if (err) {
                 return next(err);
             }
             req.body.username = username ? username : req.body.username;
-            console.log(new Date().toTimeString().split(" ")[0], " CONTINUE LOGIN");
             continueLogin(req, res, next);
         });
     } else if (loginWith.indexOf('username') !== -1 && !validator.isEmail(req.body.username)) {
-        console.log(new Date().toTimeString().split(" ")[0], " CONTINUE LOGIN");
         continueLogin(req, res, next);
     } else {
         res.status(500).send('[[error:wrong-login-type-' + loginWith + ']]');
@@ -246,8 +242,9 @@ function redirect(req, res, path) {
 }
 
 function continueLogin(req, res, next) {
-    console.log(new Date().toTimeString().split(" ")[0], " PASSPORT AUTHENTICATE");
+    console.log(new Date().toTimeString().split(" ")[0], " CALLING PASSPORT AUTHENTICATE");
     passport.authenticate('local', function (err, userData, info) {
+        console.log(new Date().toTimeString().split(" ")[0], " CALLING BACK");
         if (err) {
             return res.status(403).send(err.message);
         }
@@ -273,14 +270,12 @@ function continueLogin(req, res, next) {
         }
 
         if (passwordExpiry && passwordExpiry < Date.now()) {
-            console.log(new Date().toTimeString().split(" ")[0], " PASSWORD EXPIRED");
             winston.verbose('[auth] Triggering password reset for uid ' + userData.uid + ' due to password policy');
             req.session.passwordExpired = true;
             user.reset.generate(userData.uid, function (err, code) {
                 res.status(200).send(nconf.get('relative_path') + '/reset/' + code);
             });
         } else {
-            console.log(new Date().toTimeString().split(" ")[0], " REQ.LOGIN");
             req.login({
                 uid: userData.uid
             }, function (err) {
@@ -299,7 +294,6 @@ function continueLogin(req, res, next) {
                 var path = "/";
                 var trainingTag = "training-" + req.body.trainingId;
                 var moduleTag = "module-" + req.body.moduleId;
-                console.log(new Date().toTimeString().split(" ")[0], " GETTING TAGS");
                 async.parallel([
                     function (callback) {
                         topics.getTagTids(trainingTag, 0, 20, callback);
@@ -308,7 +302,6 @@ function continueLogin(req, res, next) {
                         topics.getTagTids(moduleTag, 0, 20, callback);
                     }
                 ], function (err, results) {
-                    console.log(new Date().toTimeString().split(" ")[0], " REDIRECTING");
                     if (err) {
                         console.log("Err: ", err);
                         redirect(req, res, path);
