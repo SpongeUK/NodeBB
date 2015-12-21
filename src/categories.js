@@ -46,7 +46,10 @@ var async = require('async'),
         Categories.getAllCategories(null, function (err, existingCategories) {
             if (err) return next(err);
 
-            callback(null, _.find(existingCategories, { "name": name }));
+            var match = _.find(existingCategories, { "name": name });
+            if (match) return callback(null, match);
+
+            callback(null, _.find(existingCategories, { "slug": name }));
         });
     };
 

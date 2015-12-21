@@ -307,6 +307,17 @@ categoriesController.removeCategoryData = function(req, res, next) {
     });
 };
 
+categoriesController.redirectByName = function (req, res, next) {
+    var categoryName = decodeURI(req.params.category_name);
+
+    categories.getByName(categoryName, function (err, category) {
+        if (err) return next(err);
+        if (!category) return res.redirect("/");
+
+        res.redirect("/category/" + category.slug);
+    });
+};
+
 categoriesController.list = function(req, res, next) {
 	async.parallel({
 		header: function (next) {

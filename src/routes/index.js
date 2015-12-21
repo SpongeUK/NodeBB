@@ -51,6 +51,7 @@ function categoryRoutes(app, middleware, controllers) {
 	setupPageRoute(app, '/recent', middleware, [], controllers.recent.get);
 	setupPageRoute(app, '/unread', middleware, [middleware.authenticate], controllers.unread.get);
 
+	setupPageRoute(app, '/category/:category_name', middleware, [], controllers.categories.redirectByName);
 	setupPageRoute(app, '/category/:category_id/:slug/:topic_index', middleware, [], controllers.categories.get);
 	setupPageRoute(app, '/category/:category_id/:slug?', middleware, [], controllers.categories.get);
 }
@@ -203,7 +204,7 @@ function handle404(app, middleware) {
 
 function handleErrors(app, middleware) {
 	app.use(function(err, req, res, next) {
-		console.log("HANDLE ERROR");
+		console.log("HANDLE ERROR: ", err);
 
 		if (err.code === 'EBADCSRFTOKEN') {
 			winston.error(req.path + '\n', err.message);
