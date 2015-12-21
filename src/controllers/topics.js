@@ -26,7 +26,7 @@ function postTopic(params, callback) {
 
         var content = (!params.instructions) ? "This topic has been created for " + params.title : params.instructions;
         topics.post({
-            uid: uid,
+            uid: 1,
             title: params.title,
             slug: params.slug,
             content: content,
@@ -140,7 +140,7 @@ function createChildCategoryAndPostTopic(params, callback) {
 
                         var content = (!params.instructions) ? "This topic has been created for " + params.title : params.instructions;
                         topics.post({
-                            uid: uid,
+                            uid: 1,
                             title: params.title,
                             slug: params.slug,
                             content: content,
