@@ -92,6 +92,7 @@ module.exports = function(Topics) {
 		var uid = data.uid;
 		var title = data.title ? data.title.trim() : data.title;
 		data.tags = data.tags || [];
+        var suppressHook = data.suppressHook;
 
 		async.waterfall([
 			function(next) {
@@ -164,7 +165,7 @@ module.exports = function(Topics) {
 				data.topicData.unreplied = 1;
 				data.topicData.mainPost = data.postData;
 
-                if (!data.suppressHook) {
+                if (!suppressHook) {
                     plugins.fireHook('action:topic.post', data.topicData);
 
                     if (parseInt(uid, 10)) {
