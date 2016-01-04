@@ -164,12 +164,13 @@ module.exports = function(Topics) {
 				data.topicData.unreplied = 1;
 				data.topicData.mainPost = data.postData;
 
-                if (!data.suppressHook)
-				    plugins.fireHook('action:topic.post', data.topicData);
+                if (!data.suppressHook) {
+                    plugins.fireHook('action:topic.post', data.topicData);
 
-				if (parseInt(uid, 10)) {
-					user.notifications.sendTopicNotificationToFollowers(uid, data.topicData, data.postData);
-				}
+                    if (parseInt(uid, 10)) {
+                        user.notifications.sendTopicNotificationToFollowers(uid, data.topicData, data.postData);
+                    }
+                }
 
 				next(null, {
 					topicData: data.topicData,
