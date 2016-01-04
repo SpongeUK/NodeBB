@@ -20,7 +20,7 @@
     "maximumTitleLength": 255,
     "minimumUsernameLength": 2,
     "maximumUsernameLength": 16,
-    "minimumPasswordLength": 6,
+    "minimumPasswordLength": 2,
     "maximumSignatureLength": 255,
     "maximumAboutMeLength": 1000,
     "maximumProfileImageSize": 256,
