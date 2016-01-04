@@ -101,7 +101,8 @@
 		},
 
 		isUserNameValid: function(name) {
-			return (name && name !== '' && (/^['"\s\-.*0-9\u00BF-\u1FFF\u2C00-\uD7FF\w]+$/.test(name)));
+			// return (name && name !== '' && (/^['"\s\-.*0-9\u00BF-\u1FFF\u2C00-\uD7FF\w]+$/.test(name)));
+			return (name && name !== '' && (/^[a-z0-9\-\_\(\)]+$/i.test(name)));
 		},
 
 		isPasswordValid: function(password) {
