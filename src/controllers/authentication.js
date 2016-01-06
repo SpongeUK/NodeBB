@@ -144,14 +144,15 @@ function sendRegistrationFailureNotification(group) {
     group = group || "";
 
     notifications.create({
-        bodyShort: '[[notifications:users_failed, admin, ' + group + ']]',
+        bodyShort: 'An error occurred creating users for ' + group,
         bodyLong: '<p>An error occurred creating users for ' + group + '</p>',
-        from: 0
+        nid: group + ':usersfailed:' + new Date().valueOf(),
+        from: 1
     }, function(err, notification) {
         if (err) return;
 
         if (notification)
-            notifications.push(notification, [0]);
+            notifications.push(notification, [ '1' ]);
     });
 }
 
@@ -159,14 +160,15 @@ function sendRegistrationSuccessNotification(group) {
     group = group || "";
 
     notifications.create({
-        bodyShort: '[[notifications:users_created, admin, ' + group + ']]',
+        bodyShort: 'Users for ' + group + ' were successfully created',
         bodyLong: '<p>Users for ' + group + ' were successfully created</p>',
-        from: 0
+        nid: group + ':userscreated:' + new Date().valueOf(),
+        from: 1
     }, function(err, notification) {
         if (err) return;
 
         if (notification)
-            notifications.push(notification, [0]);
+            notifications.push(notification, [ '1' ]);
     });
 }
 
@@ -192,11 +194,11 @@ authenticationController.registerMany = function (req, res, done) {
         });
     }, function (err) {
         if (err) {
-            sendRegistrationFailureNotification();
+            sendRegistrationFailureNotification(group);
             return res.status(500).send(err);
         }
 
-        sendRegistrationSuccessNotification();
+        sendRegistrationSuccessNotification(group);
         res.status(201).send();
     });
 };
