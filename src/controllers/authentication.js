@@ -140,6 +140,36 @@ function subscribeUserToCategory(user, groupName, next) {
     });
 }
 
+function sendRegistrationFailureNotification(group) {
+    group = group || "";
+
+    notifications.create({
+        bodyShort: '[[notifications:users_failed, admin, ' + group + ']]',
+        bodyLong: '<p>An error occurred creating users for ' + group + '</p>',
+        from: 0
+    }, function(err, notification) {
+        if (err) return;
+
+        if (notification)
+            notifications.push(notification, [0]);
+    });
+}
+
+function sendRegistrationSuccessNotification(group) {
+    group = group || "";
+
+    notifications.create({
+        bodyShort: '[[notifications:users_created, admin, ' + group + ']]',
+        bodyLong: '<p>Users for ' + group + ' were successfully created</p>',
+        from: 0
+    }, function(err, notification) {
+        if (err) return;
+
+        if (notification)
+            notifications.push(notification, [0]);
+    });
+}
+
 authenticationController.registerMany = function (req, res, done) {
     var newUsers = req.body.users;
     var group = req.body.group;
@@ -161,8 +191,12 @@ authenticationController.registerMany = function (req, res, done) {
             ], callback);
         });
     }, function (err) {
-        if (err) return res.status(500).send(err);
+        if (err) {
+            sendRegistrationFailureNotification();
+            return res.status(500).send(err);
+        }
 
+        sendRegistrationSuccessNotification();
         res.status(201).send();
     });
 };
