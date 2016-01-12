@@ -330,10 +330,10 @@ function continueLogin(req, res, next) {
                 var moduleTag = "module-" + req.body.moduleId;
                 async.parallel([
                     function (callback) {
-                        topics.getTagTids(trainingTag, 0, 20, callback);
+                        topics.getTagTids(trainingTag, 0, 1000000, callback);
                     },
                     function (callback) {
-                        topics.getTagTids(moduleTag, 0, 20, callback);
+                        topics.getTagTids(moduleTag, 0, 1000000, callback);
                     }
                 ], function (err, results) {
                     if (err) {
