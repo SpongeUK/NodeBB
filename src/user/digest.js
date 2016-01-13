@@ -104,7 +104,8 @@ var	async = require('async'),
 					}
 
 					emailer.send('digest', userObj.uid, {
-						subject: '[' + meta.config.title + '] Digest for ' + now.getFullYear()+ '/' + (now.getMonth()+1) + '/' + now.getDate(),
+						// subject: '[' + meta.config.title + '] Digest for ' + now.getFullYear()+ '/' + (now.getMonth()+1) + '/' + now.getDate(),
+						subject: 'You are in control - Digest for today',
 						username: userObj.username,
 						userslug: userObj.userslug,
 						url: nconf.get('url'),

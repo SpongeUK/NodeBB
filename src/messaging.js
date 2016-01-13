@@ -426,7 +426,8 @@ var db = require('./database'),
 		user.getSettings(messageObj.toUser.uid, function(err, settings) {
 			if (settings.sendChatNotifications && !parseInt(meta.config.disableEmailSubscriptions, 10)) {
 				emailer.send('notif_chat', touid, {
-					subject: '[[email:notif.chat.subject, ' + messageObj.fromUser.username + ']]',
+					// subject: '[[email:notif.chat.subject, ' + messageObj.fromUser.username + ']]',
+					subject: 'You are in control - New chat message',
 					username: messageObj.toUser.username,
 					userslug: utils.slugify(messageObj.toUser.username),
 					summary: '[[notifications:new_message_from, ' + messageObj.fromUser.username + ']]',
