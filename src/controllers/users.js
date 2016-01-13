@@ -217,6 +217,12 @@ function render(req, res, data, next) {
 	});
 }
 
-
+usersController.executeDailyDigest = function(req, res, next) {
+    console.log("Executing daily digest");
+    user.digest.execute('day');
+};
 
 module.exports = usersController;
+
+
+
