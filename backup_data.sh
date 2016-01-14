@@ -4,4 +4,4 @@ date=$(date +'%s')
 filepath=$path$date
 source="/var/lib/redis/redis.rdb"
 echo "Copying $source to $filepath"
-cp $source $filepath
+sudo cp $source $filepath
