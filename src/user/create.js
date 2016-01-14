@@ -143,19 +143,40 @@ module.exports = function(User) {
 		});
 	};
 
-	User.createIfNotExists = function (userData, callback) {
-		var email = userData.email;
+    User.createIfNotExists = function (userData, callback) {
+        var email = userData.email;
 
-		User.getUidByEmail(email.toLowerCase(), function(err, uid) {
-			if (uid) return callback(null, uid);
+        User.getUidByEmail(email.toLowerCase(), function(err, uid) {
+            if (uid) return callback(null, uid);
 
-			User.create(userData, function (err, user) {
+            User.create(userData, function (err, user) {
                 if (err) return callback(err);
 
-                callback(null, user);
+                User.saveSettings(user, {
+                    openOutgoingLinksInNewTab: 0,
+                    topicSearchEnabled: 0,
+                    showemail: 0,
+                    showfullname: 0,
+                    restrictChat: 0,
+                    dailyDigestFreq: 'day',
+                    sendChatNotifications: 1,
+                    sendPostNotifications: 0,
+                    followTopicsOnCreate: 1,
+                    followTopicsOnReply: 0,
+                    groupTitle: '',
+                    usePagination: 0,
+                    topicsPerPage: '20',
+                    postsPerPage: '20',
+                    notificationSounds: 0,
+                    userLang: 'en_GB'
+                }, function (err) {
+                    if (err) return callback(err);
+
+                    callback(null, user);
+                });
             });
-		});
-	};
+        });
+    };
 
 	User.isDataValid = function(userData, callback) {
 		async.parallel({
