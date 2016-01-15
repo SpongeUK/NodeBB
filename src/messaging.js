@@ -423,6 +423,8 @@ var db = require('./database'),
 			}
 		});
 
+        plugins.fireHook('filter:messaging.notify', messageObj);
+
 		user.getSettings(messageObj.toUser.uid, function(err, settings) {
 			if (settings.sendChatNotifications && !parseInt(meta.config.disableEmailSubscriptions, 10)) {
 				emailer.send('notif_chat', touid, {
