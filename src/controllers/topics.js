@@ -193,7 +193,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                 }, function (err) {
                     if (err) return callback(err);
 
-                    callback();
+                    res.status(201).send();
                 });
             } else {
                 postTopic({
@@ -206,7 +206,7 @@ topicsController.createPrivateTopic = function (req, res, callback) {
                 }, function (err) {
                     if (err) return callback(err);
 
-                    callback();
+                    res.status(201).send();
                 });
             }
         });

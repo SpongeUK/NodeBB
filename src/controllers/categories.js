@@ -301,7 +301,7 @@ categoriesController.removeCategoryData = function(req, res, next) {
             removeGroups(matchingCategories, function (err) {
                 if (err) return next(err);
 
-                next();
+                res.status(200).send();
             });
         });
     });
