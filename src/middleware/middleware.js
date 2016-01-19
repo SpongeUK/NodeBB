@@ -31,12 +31,23 @@ var app,
 	};
 
 var settings = require('../../settings.js');
+var parseDomain = require("parse-domain");
+
+function getDomain(url) {
+    url = url || "";
+    var domainInfo = parseDomain(url);
+
+    if (!domainInfo)
+        return null;
+
+    return domainInfo.domain + domainInfo.tld;
+}
 
 middleware.validateRequestSource = function (req, res, next) {
 	if (!settings.restrictRequestSource)
 		return next();
 
-	if (settings.requestSource !== req.get('Referrer'))
+	if (getDomain(settings.requestSource) !== getDomain(req.get('Referrer')))
 		return res.status(403).send();
 	
 	next();
