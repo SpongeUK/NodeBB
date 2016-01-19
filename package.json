@@ -77,7 +77,8 @@
     "underscore.deep": "^0.5.1",
     "validator": "^4.0.5",
     "winston": "^1.0.1",
-    "xregexp": "~2.0.0"
+    "xregexp": "~2.0.0",
+    "parse-domain": "^0.2.0"
   },
   "devDependencies": {
     "mocha": "~1.13.0",
