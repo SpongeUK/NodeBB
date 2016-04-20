@@ -167,7 +167,7 @@ function createChildCategoryAndPostTopic(params, callback) {
 topicsController.createPrivateTopic = function (req, res, callback) {
     var categoryName = req.params.name;
     var childCategoryName = req.params.child;
-    var slug = req.params.slug;
+    var slug = encodeURIComponent(req.params.slug);
     var username = req.body.username;
     var title = req.body.title;
     var tags = req.body.tags || [];

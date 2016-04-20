@@ -153,7 +153,7 @@ module.exports = function(User) {
                 if (err) return callback(err);
 
                 User.saveSettings(user, {
-                    openOutgoingLinksInNewTab: 0,
+                    openOutgoingLinksInNewTab: 1,
                     topicSearchEnabled: 0,
                     showemail: 0,
                     showfullname: 0,

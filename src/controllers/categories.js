@@ -74,7 +74,7 @@ function createDiscussionTopic(category, tags, instructions, callback) {
     topics.post({
         uid: 1,
         title: "General discussion", //for " + category.name,
-        slug: "general-" + category.name,
+        slug: "general-" + encodeURIComponent(category.name),
         content: content,
         cid: category.cid,
         thumb: "",
@@ -142,7 +142,8 @@ categoriesController.createChild = function(req, res, next) {
                 color: "#fff",
                 bgColor: "#b9b8b8",
                 parentCid: parentCategory.cid,
-                tags: req.body.tags
+                tags: req.body.tags,
+		slug: encodeURIComponent(categoryName)
             }, function(err, category) {
                 if (err) return next(err);
 
