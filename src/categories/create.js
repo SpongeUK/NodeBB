@@ -17,7 +17,7 @@ module.exports = function(Categories) {
 				db.incrObjectField('global', 'nextCid', next);
 			},
 			function(cid, next) {
-				var slug = cid + '/' + utils.slugify(data.name),
+				var slug = (!data.slug) ? cid + '/' + utils.slugify(data.name) : cid + '/' + data.slug,
 					order = data.order || cid,	// If no order provided, place it at the end
 					colours = Categories.assignColours();
 
