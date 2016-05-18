@@ -283,7 +283,7 @@ define('forum/category', [
 		data.showSelect = data.privileges.editable;
 
 		findInsertionPoint();
-
+		
 		templates.parse('category', 'topics', data, function(html) {
 			translator.translate(html, function(translatedHTML) {
 				var container = $('[component="category"]'),

@@ -74,7 +74,7 @@ function createDiscussionTopic(category, tags, instructions, callback) {
     topics.post({
         uid: 1,
         title: "General discussion", //for " + category.name,
-        slug: "general-" + category.name,
+        slug: "general-" + encodeURIComponent(category.name),
         content: content,
         cid: category.cid,
         thumb: "",
