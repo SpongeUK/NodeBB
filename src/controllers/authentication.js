@@ -272,6 +272,9 @@ function redirect(req, res, path) {
         var next = req.session.returnTo;
         delete req.session.returnTo;
 
+		if (path && (path === "/"))
+			return res.status(200).send(next);
+
         res.redirect(path);
         // res.status(200).send(next);
     }

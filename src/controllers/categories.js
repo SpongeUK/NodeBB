@@ -143,7 +143,7 @@ categoriesController.createChild = function(req, res, next) {
                 bgColor: "#b9b8b8",
                 parentCid: parentCategory.cid,
                 tags: req.body.tags,
-		slug: encodeURIComponent(categoryName)
+				slug: encodeURIComponent(categoryName)
             }, function(err, category) {
                 if (err) return next(err);
 
