@@ -41,3 +41,6 @@ pidfile
 ## File-based project format:
 *.ipr
 *.iws
+
+backups
+configure_env.sh
