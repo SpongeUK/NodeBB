@@ -78,7 +78,7 @@ function createDiscussionTopic(category, tags, instructions, callback) {
         content: content,
         cid: category.cid,
         thumb: "",
-        tags: tags,
+        tags: tags.concat(["general"]),
         suppressHook: true
     }, function (err) {
         if (err) return callback(err);

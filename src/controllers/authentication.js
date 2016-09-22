@@ -316,37 +316,61 @@ function continueLogin(req, res, next) {
             req.login({
                 uid: userData.uid
             }, function (err) {
-                if (err) {
-                    return res.status(403).send(err.message);
-                }
-                if (userData.uid) {
-                    user.logIP(userData.uid, req.ip);
+				if (err) {
+					return res.status(403).send(err.message);
+				}
+				if (userData.uid) {
+					user.logIP(userData.uid, req.ip);
 
-                    plugins.fireHook('action:user.loggedIn', userData.uid);
-                }
+					plugins.fireHook('action:user.loggedIn', userData.uid);
+				}
 
-                if (req.body.target && req.body.target !== "null" && req.body.target !== "undefined")
-                    return redirect(req, res, req.body.target);
+				if (req.body.target && req.body.target !== "null" && req.body.target !== "undefined")
+					return redirect(req, res, req.body.target);
 
-                var path = "/";
-                var trainingTag = "training-" + req.body.trainingId;
-                var moduleTag = "module-" + req.body.moduleId;
-                async.parallel([
-                    function (callback) {
-                        topics.getTagTids(trainingTag, 0, 1000000, callback);
-                    },
-                    function (callback) {
-                        topics.getTagTids(moduleTag, 0, 1000000, callback);
-                    }
-                ], function (err, results) {
+				var path = "/";
+				var trainingTag = "training-" + req.body.trainingId;
+				var moduleTag = "module-" + req.body.moduleId;
+				var cohortTag = "cohort-" + req.body.cohortId;
+
+				var query = {};
+				if (req.body.trainingId && req.body.moduleId) {
+					query = {
+						trainingTids: function (callback) {
+							topics.getTagTids(trainingTag, 0, 1000000, callback);
+						},
+						moduleTids: function (callback) {
+							topics.getTagTids(moduleTag, 0, 1000000, callback);
+						}
+					};
+				} else if (req.body.cohortId) {
+					query = {
+						cohortTids: function (callback) {
+							topics.getTagTids(cohortTag, 0, 1000000, callback);
+						},
+						generalTids: function (callback) {
+							topics.getTagTids("general", 0, 1000000, callback);
+						}
+					};
+				} else {
+					return redirect(req, res, path);
+				}
+
+				async.parallel(query, function (err, results) {
                     if (err) {
                         console.log("Err: ", err);
                         redirect(req, res, path);
                     }
 
-                    var matches = (results && results.length === 2) ? _.intersection(results[0], results[1]) : [];
+					var matches = [];
+                    if(results && results.trainingTids && results.trainingTids.length && results.moduleTids && results.moduleTids.length) {
+						matches = _.intersection(results.trainingTids, results.moduleTids);
+					} else if (results && results.cohortTids && results.cohortTids.length && results.generalTids && results.generalTids.length) {
+						matches = _.intersection(results.generalTids, results.cohortTids);
+					}
                     var topicId = (matches && matches.length) ? matches[0] : null;
-                    if (topicId) path += "topic/" + topicId;
+
+					if (topicId) path += "topic/" + topicId;
 
                     redirect(req, res, path);
                 });
